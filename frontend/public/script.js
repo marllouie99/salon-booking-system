@@ -59,12 +59,13 @@ async function handleGoogleSignIn(response) {
             
             // Redirect based on user type
             setTimeout(() => {
+                const base = window.location.origin;
                 if (data.user.user_type === 'salon_owner') {
-                    window.location.href = '/salon-owner-dashboard.html';
+                    window.location.href = base + '/salon-owner-dashboard.html';
                 } else if (data.user.is_staff || data.user.is_superuser) {
-                    window.location.href = '/admin.html';
+                    window.location.href = base + '/admin.html';
                 } else {
-                    window.location.href = '/customer-home.html';
+                    window.location.href = base + '/customer-home.html';
                 }
             }, 1000);
         } else {
@@ -160,13 +161,14 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             setTimeout(() => {
                 closeModal('loginModal');
                 // Redirect based on user type
+                const base = window.location.origin;
                 if (data.user.is_staff || data.user.is_superuser) {
-                    window.location.href = '/admin.html';
+                    window.location.href = base + '/admin.html';
                 } else if (data.user.user_type === 'salon_owner') {
-                    window.location.href = '/salon-owner-dashboard.html';
+                    window.location.href = base + '/salon-owner-dashboard.html';
                 } else {
                     // Regular customers go to customer home page
-                    window.location.href = '/customer-home.html';
+                    window.location.href = base + '/customer-home.html';
                 }
             }, 1500);
         } else {
@@ -453,12 +455,13 @@ document.getElementById('verificationForm').addEventListener('submit', async fun
             setTimeout(() => {
                 closeModal('verificationModal');
                 // Redirect based on user type or to home page
+                const base = window.location.origin;
                 if (data.user && data.user.user_type === 'salon_owner') {
-                    window.location.href = '/salon-owner-dashboard.html';
+                    window.location.href = base + '/salon-owner-dashboard.html';
                 } else if (data.user && data.user.is_staff) {
-                    window.location.href = '/admin.html';
+                    window.location.href = base + '/admin.html';
                 } else {
-                    window.location.href = '/customer-home.html';
+                    window.location.href = base + '/customer-home.html';
                 }
             }, 1500);
         } else {

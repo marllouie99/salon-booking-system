@@ -42,17 +42,15 @@ function loadUserData() {
             updateSalonButton('owner');
         }
     } else {
-        // Give localStorage time to load after redirect, then check again
+        // Graceful fallback: wait briefly and retry once without redirecting away
         setTimeout(() => {
             const retryUserData = JSON.parse(localStorage.getItem('user_data'));
-            if (!retryUserData) {
-                // If still no user data after delay, redirect to login
-                window.location.href = '/';
-            } else {
-                // Reload the page to properly initialize with user data
+            if (retryUserData) {
                 window.location.reload();
+            } else {
+                console.warn('User data not found yet; staying on customer-home page.');
             }
-        }, 500);
+        }, 700);
     }
 }
 
@@ -162,7 +160,7 @@ function loadMockData() {
 // Load featured salons from API
 async function loadFeaturedSalons() {
     try {
-        const response = await fetch('http://localhost:8000/api/salons/');
+        const response = await fetch(`${window.API_BASE_URL}/api/salons/`);
         
         if (response.ok) {
             const salons = await response.json();
@@ -820,12 +818,12 @@ function createSalonCard(salon) {
     
     // Handle cover image - use salon's cover_image if available, otherwise use placeholder
     const coverImage = salon.cover_image 
-        ? `http://localhost:8000${salon.cover_image}` 
+        ? `${window.API_BASE_URL}${salon.cover_image}` 
         : `https://via.placeholder.com/300x200?text=${encodeURIComponent(salon.name)}`;
     
     // Handle logo - use salon's logo if available, otherwise use placeholder
     const logoImage = salon.logo 
-        ? `http://localhost:8000${salon.logo}` 
+        ? `${window.API_BASE_URL}${salon.logo}` 
         : 'https://via.placeholder.com/80x80?text=' + encodeURIComponent(salon.name.charAt(0));
     
     return `

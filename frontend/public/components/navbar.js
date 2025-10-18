@@ -22,7 +22,7 @@ function loadNavbar() {
                 // User has uploaded avatar - display image
                 const avatarUrl = profilePicture.startsWith('http') 
                     ? profilePicture 
-                    : `http://localhost:8000${profilePicture}`;
+                    : `${window.API_BASE_URL}${profilePicture}`;
                 userAvatar.innerHTML = `
                     <img src="${avatarUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                     <span class="profile-warning-badge" id="avatarWarningBadge" style="display: none;">
@@ -60,7 +60,7 @@ function loadNavbar() {
 // Load existing notifications from API
 async function loadExistingNotifications() {
     try {
-        const response = await authenticatedFetchNavbar('http://localhost:8000/api/notifications/');
+        const response = await authenticatedFetchNavbar(`${window.API_BASE_URL}/api/notifications/`);
         
         if (!response || !response.ok) {
             console.log('Could not load notifications');
@@ -107,7 +107,7 @@ async function refreshAccessToken() {
         throw new Error('No refresh token available');
     }
 
-    const response = await fetch('http://localhost:8000/api/accounts/token/refresh/', {
+    const response = await fetch(`${window.API_BASE_URL}/api/accounts/token/refresh/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -171,7 +171,7 @@ async function checkSalonApplicationStatus(userData) {
     
     // Check if user has a pending application
     try {
-        const response = await authenticatedFetchNavbar('http://localhost:8000/api/salons/applications/my/');
+        const response = await authenticatedFetchNavbar(`${window.API_BASE_URL}/api/salons/applications/my/`);
         
         if (!response) return; // Token refresh failed or no token
         
@@ -315,7 +315,7 @@ function toggleNotifications() {
 async function handleNotificationClick(notificationId, actionUrl) {
     try {
         // Mark notification as read
-        await authenticatedFetchNavbar(`http://localhost:8000/api/notifications/${notificationId}/mark_read/`, {
+        await authenticatedFetchNavbar(`${window.API_BASE_URL}/api/notifications/${notificationId}/mark_read/`, {
             method: 'POST'
         });
         
@@ -338,7 +338,7 @@ async function handleNotificationClick(notificationId, actionUrl) {
 // Mark all notifications as read
 async function markAllNotificationsRead() {
     try {
-        const response = await authenticatedFetchNavbar('http://localhost:8000/api/notifications/mark_all_read/', {
+        const response = await authenticatedFetchNavbar(`${window.API_BASE_URL}/api/notifications/mark_all_read/`, {
             method: 'POST'
         });
         
@@ -456,7 +456,7 @@ async function handleSalonAction() {
     
     // Check if user has an existing application
     try {
-        const response = await authenticatedFetchNavbar('http://localhost:8000/api/salons/applications/my/');
+        const response = await authenticatedFetchNavbar(`${window.API_BASE_URL}/api/salons/applications/my/`);
         
         if (response && response.ok) {
             const data = await response.json();
@@ -792,7 +792,7 @@ function initializeSalonApplicationForm() {
             }
             
             // Send to backend with authenticated fetch
-            const response = await authenticatedFetchNavbar('http://localhost:8000/api/salons/apply/', {
+            const response = await authenticatedFetchNavbar(`${window.API_BASE_URL}/api/salons/apply/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
