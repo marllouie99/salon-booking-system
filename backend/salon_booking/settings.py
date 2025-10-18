@@ -24,6 +24,13 @@ RAILWAY_STATIC_URL = config('RAILWAY_STATIC_URL', default='')
 if RAILWAY_STATIC_URL:
     ALLOWED_HOSTS.append(RAILWAY_STATIC_URL.replace('https://', '').replace('http://', ''))
 
+# CSRF Trusted Origins for Railway
+CSRF_TRUSTED_ORIGINS = [
+    'https://web-production-e6265.up.railway.app',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
