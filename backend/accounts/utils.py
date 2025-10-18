@@ -60,16 +60,22 @@ Salon Booking System Team
             to=recipient_list,
         )
         
-        # Use fail_silently=True to prevent blocking on SMTP errors
-        email.send(fail_silently=True)
+        # Try to send email and catch any errors
+        result = email.send(fail_silently=False)
         
-        print(f"✅ Verification email queued for {user.email}")
-        # Return success immediately without waiting for SMTP confirmation
-        return True, "Verification email sent successfully"
+        if result:
+            print(f"✅ Verification email SENT successfully to {user.email}")
+            return True, "Verification email sent successfully"
+        else:
+            print(f"⚠️ Email send returned 0 (failed)")
+            return False, "Failed to send email"
     except Exception as e:
-        print(f"⚠️ Email sending error (non-blocking): {str(e)}")
-        # Still return success since user was created
-        return True, "Account created successfully"
+        print(f"❌ Email sending FAILED: {str(e)}")
+        print(f"❌ Error type: {type(e).__name__}")
+        import traceback
+        traceback.print_exc()
+        # Still return success since user was created, but with warning
+        return True, f"Account created but email failed: {str(e)}"
 
 
 def send_password_reset_email(user, reset_code):
