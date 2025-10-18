@@ -27,6 +27,7 @@ if RAILWAY_STATIC_URL:
 # CSRF Trusted Origins for Railway
 CSRF_TRUSTED_ORIGINS = [
     'https://web-production-e6265.up.railway.app',
+    'https://resplendent-swan-7ddbe1.netlify.app',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
 ]
@@ -194,9 +195,13 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
+    "https://resplendent-swan-7ddbe1.netlify.app",  # Your Netlify frontend
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False  # Set to True only for development
 
 # JWT Settings
 from datetime import timedelta
