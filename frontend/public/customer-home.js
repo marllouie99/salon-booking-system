@@ -42,8 +42,17 @@ function loadUserData() {
             updateSalonButton('owner');
         }
     } else {
-        // If no user data, redirect to login
-        window.location.href = '/';
+        // Give localStorage time to load after redirect, then check again
+        setTimeout(() => {
+            const retryUserData = JSON.parse(localStorage.getItem('user_data'));
+            if (!retryUserData) {
+                // If still no user data after delay, redirect to login
+                window.location.href = '/';
+            } else {
+                // Reload the page to properly initialize with user data
+                window.location.reload();
+            }
+        }, 500);
     }
 }
 
