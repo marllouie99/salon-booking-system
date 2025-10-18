@@ -153,16 +153,18 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         
         if (response.ok) {
             console.log('✅ Login successful, user data:', data.user);
-            showNotification('Login successful! Welcome back!', 'success');
-            // Store tokens if needed
-            localStorage.setItem('access_token', data.tokens.access);
-            localStorage.setItem('refresh_token', data.tokens.refresh);
-            localStorage.setItem('user_data', JSON.stringify(data.user));
-            console.log('✅ Tokens and user data saved to localStorage');
             
-            setTimeout(() => {
-                closeModal('loginModal');
-                // Redirect based on user type
+            try {
+                // Store tokens and user data
+                localStorage.setItem('access_token', data.tokens.access);
+                localStorage.setItem('refresh_token', data.tokens.refresh);
+                localStorage.setItem('user_data', JSON.stringify(data.user));
+                console.log('✅ Tokens saved to localStorage');
+                
+                // Show success notification
+                showNotification('Login successful! Redirecting...', 'success');
+                
+                // Determine redirect URL
                 const base = window.location.origin;
                 let redirectUrl;
                 if (data.user.is_staff || data.user.is_superuser) {
@@ -173,9 +175,22 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
                     // Regular customers go to customer home page
                     redirectUrl = base + '/customer-home.html';
                 }
+                
                 console.log('🚀 Redirecting to:', redirectUrl);
-                window.location.href = redirectUrl;
-            }, 1500);
+                
+                // Close modal and redirect immediately
+                closeModal('loginModal');
+                
+                // Force immediate redirect with replace to avoid back button issues
+                setTimeout(() => {
+                    console.log('⏰ Executing redirect now...');
+                    window.location.replace(redirectUrl);
+                }, 800);
+                
+            } catch (error) {
+                console.error('❌ Error during login redirect:', error);
+                showNotification('Login successful but redirect failed. Please refresh the page.', 'error');
+            }
         } else {
             // Check if email is not verified
             if (data.email_not_verified) {
