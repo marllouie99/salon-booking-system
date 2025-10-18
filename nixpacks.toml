@@ -1,0 +1,14 @@
+[phases.setup]
+nixPkgs = ["python313"]
+
+[phases.install]
+cmds = [
+  "python -m venv /app/.venv",
+  "pip install --no-cache-dir --force-reinstall -r requirements.txt"
+]
+
+[phases.build]
+cmds = ["echo 'Build complete'"]
+
+[start]
+cmd = "python manage.py migrate && gunicorn salon_booking.wsgi --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
