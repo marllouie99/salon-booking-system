@@ -2,10 +2,10 @@
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "cd backend && pip install -r requirements.txt && python manage.py collectstatic --noinput"
+    "buildCommand": "cd backend && pip install -r requirements.txt && DJANGO_SETTINGS_MODULE=salon_booking.settings python -c 'print(\"Build complete\")'"
   },
   "deploy": {
-    "startCommand": "cd backend && python manage.py migrate && gunicorn salon_booking.wsgi --bind 0.0.0.0:$PORT",
+    "startCommand": "cd backend && python manage.py migrate --run-syncdb && gunicorn salon_booking.wsgi --bind 0.0.0.0:$PORT",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }

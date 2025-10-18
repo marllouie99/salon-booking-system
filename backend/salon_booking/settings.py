@@ -5,6 +5,7 @@ Django settings for salon_booking project.
 import os
 from pathlib import Path
 from decouple import config
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -78,25 +79,32 @@ WSGI_APPLICATION = 'salon_booking.wsgi.application'
 
 # Database configuration
 # ============================================
-# POSTGRESQL (via Supabase) - PRIMARY DATABASE
+# DATABASE CONFIGURATION
 # ============================================
-# Note: Using DATABASE_ prefix instead of SUPABASE_ to avoid platform conflicts
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DATABASE_NAME', default='postgres'),
-        'USER': config('DATABASE_USER', default='postgres'),
-        'PASSWORD': config('DATABASE_PASSWORD'),
-        'HOST': config('DATABASE_HOST'),
-        'PORT': config('DATABASE_PORT', default='5432'),
-        'OPTIONS': {
-            'sslmode': 'require',  # Required for Supabase
-            'options': '-c default_transaction_isolation=read_committed',
-        },
-        'CONN_MAX_AGE': 600,  # Connection pooling (10 minutes)
-        'DISABLE_SERVER_SIDE_CURSORS': True,  # Better for connection pooling
+# Use Railway's DATABASE_URL if available, otherwise use individual variables
+DATABASE_URL = config('DATABASE_URL', default='')
+
+if DATABASE_URL:
+    # Railway PostgreSQL (recommended for deployment)
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
     }
-}
+else:
+    # Supabase or custom PostgreSQL
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DATABASE_NAME', default='postgres'),
+            'USER': config('DATABASE_USER', default='postgres'),
+            'PASSWORD': config('DATABASE_PASSWORD'),
+            'HOST': config('DATABASE_HOST'),
+            'PORT': config('DATABASE_PORT', default='5432'),
+            'OPTIONS': {
+                'sslmode': 'require',
+            },
+            'CONN_MAX_AGE': 600,
+        }
+    }
 
 # ============================================
 # SQLITE (BACKUP) - Uncomment to switch back to SQLite
