@@ -2,9 +2,14 @@
   base = "frontend"
   publish = "public"
   command = "echo 'Static site - no build required'"
+  
+# Skip all dependency installation
+[build.processing]
+  skip_processing = false
 
 [build.environment]
-  # Prevent Python detection
+  # Explicitly disable Python
   PYTHON_VERSION = ""
-  # Use Node for static site serving
-  NODE_VERSION = "18"
+  # Disable dependency installation
+  NPM_FLAGS = "--no-optional"
+  NODE_ENV = "production"

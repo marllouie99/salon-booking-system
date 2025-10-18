@@ -1,0 +1,11 @@
+# Ignore root-level backend files
+../runtime.txt
+../requirements.txt
+../Procfile
+../backend/
+../venv/
+../.git/
+../database/
+../*.sql
+../*.py
+../*.md
