@@ -1,5 +1,11 @@
 // Profile Management JavaScript
 
+// Ensure API_BASE_URL is defined (fallback if config.js hasn't loaded yet)
+if (typeof window.API_BASE_URL === 'undefined') {
+    window.API_BASE_URL = 'https://web-production-e6265.up.railway.app';
+    console.warn('⚠️ API_BASE_URL was undefined in profile.js, using fallback:', window.API_BASE_URL);
+}
+
 // Check if user is logged in
 const userData = JSON.parse(localStorage.getItem('user_data'));
 const accessToken = localStorage.getItem('access_token');
