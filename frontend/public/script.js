@@ -60,11 +60,11 @@ async function handleGoogleSignIn(response) {
             // Redirect based on user type
             setTimeout(() => {
                 if (data.user.user_type === 'salon_owner') {
-                    window.location.href = '/salon/dashboard';
-                } else if (data.user.user_type === 'admin') {
-                    window.location.href = '/admin/dashboard';
+                    window.location.href = '/salon-owner-dashboard.html';
+                } else if (data.user.is_staff || data.user.is_superuser) {
+                    window.location.href = '/admin.html';
                 } else {
-                    window.location.href = '/home';
+                    window.location.href = '/customer-home.html';
                 }
             }, 1000);
         } else {
@@ -159,12 +159,14 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             
             setTimeout(() => {
                 closeModal('loginModal');
-                // Redirect admin users to admin dashboard
+                // Redirect based on user type
                 if (data.user.is_staff || data.user.is_superuser) {
-                    window.location.href = '/admin';
+                    window.location.href = '/admin.html';
+                } else if (data.user.user_type === 'salon_owner') {
+                    window.location.href = '/salon-owner-dashboard.html';
                 } else {
-                    // Regular users go to customer home page
-                    window.location.href = '/home';
+                    // Regular customers go to customer home page
+                    window.location.href = '/customer-home.html';
                 }
             }, 1500);
         } else {
@@ -452,11 +454,11 @@ document.getElementById('verificationForm').addEventListener('submit', async fun
                 closeModal('verificationModal');
                 // Redirect based on user type or to home page
                 if (data.user && data.user.user_type === 'salon_owner') {
-                    window.location.href = '/salon/dashboard';
+                    window.location.href = '/salon-owner-dashboard.html';
                 } else if (data.user && data.user.is_staff) {
-                    window.location.href = '/admin/dashboard';
+                    window.location.href = '/admin.html';
                 } else {
-                    window.location.href = '/home';
+                    window.location.href = '/customer-home.html';
                 }
             }, 1500);
         } else {
