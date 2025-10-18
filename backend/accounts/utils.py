@@ -12,7 +12,7 @@ def generate_verification_code(length=6):
 
 
 def send_verification_email(user):
-    """Send verification code to user's email"""
+    """Send verification code to user's email using Brevo API"""
     # Generate verification code
     verification_code = generate_verification_code()
     
@@ -44,31 +44,54 @@ Salon Booking System Team
     """
     
     from_email = settings.DEFAULT_FROM_EMAIL
-    recipient_list = [user.email]
     
     try:
         print(f"📧 Attempting to send verification email to: {user.email}")
         print(f"📧 From email: {from_email}")
         print(f"📧 Verification code: {verification_code}")
         
-        # Send email with a timeout to prevent worker timeout
-        from django.core.mail import EmailMessage
-        email = EmailMessage(
-            subject=subject,
-            body=message,
-            from_email=from_email,
-            to=recipient_list,
-        )
+        # Use Brevo API if available (recommended for production)
+        brevo_api_key = getattr(settings, 'BREVO_API_KEY', None)
         
-        # Try to send email and catch any errors
-        result = email.send(fail_silently=False)
-        
-        if result:
-            print(f"✅ Verification email SENT successfully to {user.email}")
+        if brevo_api_key:
+            # Send via Brevo API (HTTP - not blocked by Railway)
+            import sib_api_v3_sdk
+            from sib_api_v3_sdk.rest import ApiException
+            
+            configuration = sib_api_v3_sdk.Configuration()
+            configuration.api_key['api-key'] = brevo_api_key
+            
+            api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+            
+            send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                to=[{"email": user.email, "name": user.first_name or user.username}],
+                sender={"email": from_email, "name": "Salon Booking System"},
+                subject=subject,
+                text_content=message
+            )
+            
+            api_response = api_instance.send_transac_email(send_smtp_email)
+            print(f"✅ Verification email SENT successfully via Brevo API to {user.email}")
+            print(f"✅ Message ID: {api_response.message_id}")
             return True, "Verification email sent successfully"
         else:
-            print(f"⚠️ Email send returned 0 (failed)")
-            return False, "Failed to send email"
+            # Fallback to Django SMTP
+            from django.core.mail import EmailMessage
+            email = EmailMessage(
+                subject=subject,
+                body=message,
+                from_email=from_email,
+                to=[user.email],
+            )
+            result = email.send(fail_silently=False)
+            
+            if result:
+                print(f"✅ Verification email SENT successfully to {user.email}")
+                return True, "Verification email sent successfully"
+            else:
+                print(f"⚠️ Email send returned 0 (failed)")
+                return False, "Failed to send email"
+                
     except Exception as e:
         print(f"❌ Email sending FAILED: {str(e)}")
         print(f"❌ Error type: {type(e).__name__}")
