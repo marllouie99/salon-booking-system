@@ -1,3 +1,10 @@
 [build]
+  base = "frontend"
   publish = "public"
-  command = "echo 'No build needed - static site'"
+  command = "echo 'Static site - no build required'"
+
+[build.environment]
+  # Prevent Python detection
+  PYTHON_VERSION = ""
+  # Use Node for static site serving
+  NODE_VERSION = "18"
