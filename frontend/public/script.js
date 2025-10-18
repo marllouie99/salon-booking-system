@@ -37,7 +37,7 @@ async function handleGoogleSignIn(response) {
         const credential = response.credential;
         
         // Send to backend
-        const res = await fetch('http://localhost:8000/api/accounts/google-login/', {
+        const res = await fetch(`${window.API_BASE_URL}/api/accounts/google-login/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -137,7 +137,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     try {
         showNotification('Logging in...', 'info');
         
-        const response = await fetch('http://localhost:8000/api/accounts/login/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/login/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -235,7 +235,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     try {
         showNotification('Creating account...', 'info');
         
-        const response = await fetch('http://localhost:8000/api/accounts/register/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/register/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -479,7 +479,7 @@ document.getElementById('verificationForm').addEventListener('submit', async fun
     try {
         showNotification('Verifying...', 'info');
         
-        const response = await fetch('http://localhost:8000/api/accounts/verify-email/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/verify-email/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -542,7 +542,7 @@ async function resendVerificationCode() {
         resendBtn.disabled = true;
         showNotification('Sending new code...', 'info');
         
-        const response = await fetch('http://localhost:8000/api/accounts/resend-verification/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/resend-verification/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -601,7 +601,7 @@ document.getElementById('forgotPasswordForm').addEventListener('submit', async f
     try {
         showNotification('Sending reset code...', 'info');
         
-        const response = await fetch('http://localhost:8000/api/accounts/request-password-reset/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/request-password-reset/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -705,7 +705,7 @@ document.getElementById('resetCodeForm').addEventListener('submit', async functi
     try {
         showNotification('Verifying code...', 'info');
         
-        const response = await fetch('http://localhost:8000/api/accounts/verify-reset-code/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/verify-reset-code/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -765,7 +765,7 @@ document.getElementById('newPasswordForm').addEventListener('submit', async func
     try {
         showNotification('Resetting password...', 'info');
         
-        const response = await fetch('http://localhost:8000/api/accounts/reset-password/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/reset-password/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -809,7 +809,7 @@ async function resendResetCode() {
     try {
         showNotification('Sending new code...', 'info');
         
-        const response = await fetch('http://localhost:8000/api/accounts/request-password-reset/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/request-password-reset/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
