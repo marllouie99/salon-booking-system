@@ -47,6 +47,10 @@ Salon Booking System Team
     recipient_list = [user.email]
     
     try:
+        print(f"📧 Attempting to send verification email to: {user.email}")
+        print(f"📧 From email: {from_email}")
+        print(f"📧 Verification code: {verification_code}")
+        
         send_mail(
             subject=subject,
             message=message,
@@ -54,8 +58,12 @@ Salon Booking System Team
             recipient_list=recipient_list,
             fail_silently=False,
         )
+        print(f"✅ Verification email sent successfully to {user.email}")
         return True, "Verification email sent successfully"
     except Exception as e:
+        print(f"❌ Failed to send verification email: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return False, str(e)
 
 
