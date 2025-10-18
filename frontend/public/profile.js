@@ -35,9 +35,13 @@ function loadUserProfile() {
     
     if (profilePicture) {
         // User has uploaded avatar
-        const avatarUrl = profilePicture.startsWith('http') 
+        let avatarUrl = profilePicture.startsWith('http') 
             ? profilePicture 
             : `${window.API_BASE_URL}${profilePicture}`;
+        
+        // Add cache-busting parameter to force reload
+        avatarUrl += (avatarUrl.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
+        
         avatarCircle.innerHTML = `<img src="${avatarUrl}" alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
     } else {
         // Show initials as fallback
@@ -343,6 +347,21 @@ async function uploadAvatar(file) {
                 const currentUser = JSON.parse(localStorage.getItem('user_data'));
                 const updatedUser = { ...currentUser, ...data.user };
                 localStorage.setItem('user_data', JSON.stringify(updatedUser));
+                
+                // Update the avatar display immediately
+                const avatarCircle = document.getElementById('avatarCircle');
+                const profilePicture = data.user.profile_picture || data.user.avatar;
+                
+                if (profilePicture && avatarCircle) {
+                    let avatarUrl = profilePicture.startsWith('http') 
+                        ? profilePicture 
+                        : `${window.API_BASE_URL}${profilePicture}`;
+                    
+                    // Add cache-busting parameter to force reload
+                    avatarUrl += (avatarUrl.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
+                    
+                    avatarCircle.innerHTML = `<img src="${avatarUrl}" alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                }
             }
             showNotification('Profile photo updated!', 'success');
         } else {
