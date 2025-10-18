@@ -276,11 +276,8 @@ function showNotification(message, type = 'info') {
     existingNotifications.forEach(notification => notification.remove());
     
     const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <span>${message}</span>
-        <button onclick="this.parentElement.remove()">&times;</button>
-    `;
+    notification.className = 'notification notification-' + type;
+    notification.innerHTML = '<span>' + message + '</span><button onclick="this.parentElement.remove()">&times;</button>';
     
     document.body.appendChild(notification);
     
