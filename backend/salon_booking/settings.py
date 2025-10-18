@@ -17,7 +17,7 @@ SECRET_KEY = config('SECRET_KEY', default='your-secret-key-here-change-in-produc
 DEBUG = config('DEBUG', default=True, cast=bool)
 
 # Parse ALLOWED_HOSTS from environment variable (comma-separated)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,web-production-e6265.up.railway.app').split(',')
 
 # Add Railway domain if deployed
 RAILWAY_STATIC_URL = config('RAILWAY_STATIC_URL', default='')
