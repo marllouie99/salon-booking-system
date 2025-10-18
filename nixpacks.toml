@@ -1,11 +1,11 @@
 [phases.setup]
-nixPkgs = ["python311", "postgresql"]
+nixPkgs = ["python311", "python311Packages.pip", "postgresql"]
 
 [phases.install]
-cmds = ["pip install -r backend/requirements.txt"]
+cmds = ["python3.11 -m pip install -r backend/requirements.txt"]
 
 [phases.build]
-cmds = ["cd backend && python manage.py collectstatic --noinput"]
+cmds = ["cd backend && python3.11 manage.py collectstatic --noinput"]
 
 [start]
-cmd = "cd backend && gunicorn salon_booking.wsgi --bind 0.0.0.0:$PORT"
+cmd = "cd backend && python3.11 manage.py migrate && python3.11 -m gunicorn salon_booking.wsgi --bind 0.0.0.0:$PORT"
