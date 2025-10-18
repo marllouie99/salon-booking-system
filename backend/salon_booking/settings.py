@@ -197,7 +197,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:5500",
     "http://127.0.0.1:5500",
-    "https://resplendent-swan-7ddbe1.netlify.app",  # Your Netlify frontend
+    "https://resplendent-swan-7ddbe1.netlify.app",  # Old Netlify frontend
+    "https://tangerine-jalebi-f488be.netlify.app",  # Current Netlify frontend
 ]
 
 CORS_ALLOW_CREDENTIALS = True
