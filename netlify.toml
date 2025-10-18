@@ -1,11 +1,7 @@
 [build]
   base = "frontend"
-  publish = "frontend/public"
-  command = "ls -la frontend/public"
-  ignore = "/bin/false"
+  publish = "public"
+  command = "echo 'Deploying static site'"
 
 [build.environment]
-  # Force Node.js environment (no Python)
   NODE_VERSION = "18"
-  # Explicitly tell Netlify this is NOT a Python project
-  PYTHON_VERSION = "false"
