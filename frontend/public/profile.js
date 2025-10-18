@@ -31,7 +31,7 @@ function loadUserProfile() {
         // User has uploaded avatar
         const avatarUrl = profilePicture.startsWith('http') 
             ? profilePicture 
-            : `http://localhost:8000${profilePicture}`;
+            : `${window.API_BASE_URL}${profilePicture}`;
         avatarCircle.innerHTML = `<img src="${avatarUrl}" alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
     } else {
         // Show initials as fallback
@@ -84,7 +84,7 @@ function highlightIncompleteFields() {
 // Load user statistics
 async function loadUserStats() {
     try {
-        const response = await authenticatedFetch('http://localhost:8000/api/bookings/my-bookings/');
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/bookings/my-bookings/`);
         if (response.ok) {
             const bookings = await response.json();
             document.getElementById('totalBookings').textContent = bookings.length || 0;
@@ -131,7 +131,7 @@ async function refreshAccessToken() {
     if (!refreshToken) return false;
 
     try {
-        const response = await fetch('http://localhost:8000/api/accounts/token/refresh/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/token/refresh/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ refresh: refreshToken })
@@ -211,7 +211,7 @@ document.getElementById('personalInfoForm').addEventListener('submit', async fun
     try {
         showNotification('Updating profile...', 'info');
 
-        const response = await authenticatedFetch('http://localhost:8000/api/accounts/profile/update/', {
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/accounts/profile/update/`, {
             method: 'PATCH',
             body: JSON.stringify(formData)
         });
@@ -257,7 +257,7 @@ document.getElementById('passwordForm').addEventListener('submit', async functio
     try {
         showNotification('Updating password...', 'info');
 
-        const response = await authenticatedFetch('http://localhost:8000/api/accounts/change-password/', {
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/accounts/change-password/`, {
             method: 'POST',
             body: JSON.stringify({
                 current_password: currentPassword,
@@ -321,7 +321,7 @@ async function uploadAvatar(file) {
         showNotification('Uploading photo...', 'info');
 
         const token = localStorage.getItem('access_token');
-        const response = await fetch('http://localhost:8000/api/accounts/profile/avatar/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/profile/avatar/`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -356,7 +356,7 @@ async function updatePreference(preference) {
     const value = document.getElementById(preference).checked;
     
     try {
-        const response = await authenticatedFetch('http://localhost:8000/api/accounts/profile/preferences/', {
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/accounts/profile/preferences/`, {
             method: 'PATCH',
             body: JSON.stringify({
                 [preference]: value
@@ -399,7 +399,7 @@ async function deleteAccount() {
     try {
         showNotification('Deleting account...', 'info');
 
-        const response = await authenticatedFetch('http://localhost:8000/api/accounts/profile/delete/', {
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/accounts/profile/delete/`, {
             method: 'DELETE'
         });
 
