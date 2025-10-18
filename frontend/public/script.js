@@ -152,24 +152,29 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         const data = await response.json();
         
         if (response.ok) {
+            console.log('✅ Login successful, user data:', data.user);
             showNotification('Login successful! Welcome back!', 'success');
             // Store tokens if needed
             localStorage.setItem('access_token', data.tokens.access);
             localStorage.setItem('refresh_token', data.tokens.refresh);
             localStorage.setItem('user_data', JSON.stringify(data.user));
+            console.log('✅ Tokens and user data saved to localStorage');
             
             setTimeout(() => {
                 closeModal('loginModal');
                 // Redirect based on user type
                 const base = window.location.origin;
+                let redirectUrl;
                 if (data.user.is_staff || data.user.is_superuser) {
-                    window.location.href = base + '/admin.html';
+                    redirectUrl = base + '/admin.html';
                 } else if (data.user.user_type === 'salon_owner') {
-                    window.location.href = base + '/salon-owner-dashboard.html';
+                    redirectUrl = base + '/salon-owner-dashboard.html';
                 } else {
                     // Regular customers go to customer home page
-                    window.location.href = base + '/customer-home.html';
+                    redirectUrl = base + '/customer-home.html';
                 }
+                console.log('🚀 Redirecting to:', redirectUrl);
+                window.location.href = redirectUrl;
             }, 1500);
         } else {
             // Check if email is not verified

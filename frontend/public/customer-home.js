@@ -25,7 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Load user data from localStorage
 function loadUserData() {
+    console.log('🏠 Customer home page loaded');
     const userData = JSON.parse(localStorage.getItem('user_data'));
+    console.log('📦 User data from localStorage:', userData);
     
     if (userData) {
         const firstName = userData.first_name || 'User';
@@ -42,13 +44,15 @@ function loadUserData() {
             updateSalonButton('owner');
         }
     } else {
+        console.warn('⚠️ No user data found immediately, waiting 700ms...');
         // Graceful fallback: wait briefly and retry once without redirecting away
         setTimeout(() => {
             const retryUserData = JSON.parse(localStorage.getItem('user_data'));
             if (retryUserData) {
+                console.log('✅ User data found on retry, reloading page');
                 window.location.reload();
             } else {
-                console.warn('User data not found yet; staying on customer-home page.');
+                console.error('❌ User data still not found after retry. Staying on page.');
             }
         }, 700);
     }
