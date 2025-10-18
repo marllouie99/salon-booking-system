@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage My Salon - SalonBook</title>
+    
+    <!-- Shared Navbar CSS -->
+    <link rel="stylesheet" href="/components/navbar.css">
+    
+    <!-- Page-Specific CSS -->
+    <link rel="stylesheet" href="/salon-owner-dashboard.css">
+    <link rel="stylesheet" href="/red-theme.css">
+    <link rel="stylesheet" href="/chat.css">
+    <link rel="stylesheet" href="/reviews.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Load Navbar Component -->
+    <script>
+        fetch('/components/navbar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.body.insertAdjacentHTML('afterbegin', html);
+                const script = document.createElement('script');
+                script.src = '/components/navbar.js';
+                document.head.appendChild(script);
+            });
+    </script>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Salon Cover Image -->
+        <div id="salonCoverContainer" class="salon-cover-container">
+            <div id="salonCover" class="salon-cover-image">
+                <!-- Cover image will be set as background -->
+                <button class="cover-upload-btn" onclick="uploadSalonCover()" title="Upload Cover Image">
+                    <i class="fas fa-camera"></i>
+                </button>
+            </div>
+            <div id="salonLogoContainer" class="salon-logo-overlay">
+                <div id="salonLogo" class="salon-logo-image">
+                    <!-- Logo will be displayed here -->
+                </div>
+                <button class="logo-upload-btn" onclick="uploadSalonLogo()" title="Upload Logo">
+                    <i class="fas fa-camera"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Salon Information Banner -->
+        <section class="salon-info-banner">
+            <div class="salon-info-content">
+                <div class="salon-main-info">
+                    <h1 id="salonName">Loading your salon...</h1>
+                    <div class="salon-meta">
+                        <span class="salon-location" id="salonLocation">
+                            <i class="fas fa-map-marker-alt"></i> <span id="salonCity">City</span>, <span id="salonState">State</span>
+                        </span>
+                        <span class="salon-contact" id="salonPhone">
+                            <i class="fas fa-phone"></i> <span id="salonPhoneText">Phone</span>
+                        </span>
+                        <span class="salon-email" id="salonEmail">
+                            <i class="fas fa-envelope"></i> <span id="salonEmailText">Email</span>
+                        </span>
+                    </div>
+                    <div class="salon-badges">
+                        <span class="badge-verified" id="verifiedBadge" style="display: none;">
+                            <i class="fas fa-certificate"></i> Verified
+                        </span>
+                        <span class="badge-status" id="statusBadge">
+                            <i class="fas fa-circle"></i> Active
+                        </span>
+                    </div>
+                </div>
+                <div class="salon-actions">
+                    <button class="btn-primary" onclick="showEditSalonModal()">
+                        <i class="fas fa-edit"></i> Edit Salon Info
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="overview" onclick="switchDashboardTab('overview')">
+                    <i class="fas fa-chart-line"></i> Overview
+                </button>
+                <button class="tab-btn" data-tab="bookings" onclick="switchDashboardTab('bookings')">
+                    <i class="fas fa-calendar-alt"></i> Bookings
+                </button>
+                <button class="tab-btn" data-tab="services" onclick="switchDashboardTab('services')">
+                    <i class="fas fa-scissors"></i> Services
+                </button>
+                <button class="tab-btn" data-tab="transactions" onclick="switchDashboardTab('transactions')">
+                    <i class="fas fa-dollar-sign"></i> Transactions
+                </button>
+                <button class="tab-btn" data-tab="reviews" onclick="switchDashboardTab('reviews')">
+                    <i class="fas fa-star"></i> Reviews
+                </button>
+                <button class="tab-btn" data-tab="salon-info" onclick="switchDashboardTab('salon-info')">
+                    <i class="fas fa-store"></i> Salon Info
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Content: Overview -->
+        <div class="tab-content active" id="tab-overview">
+            <!-- Stats Section -->
+            <section class="stats-section">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #667eea;">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalBookings">0</h3>
+                        <p>Total Bookings</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #f59e0b;">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="pendingBookings">0</h3>
+                        <p>Pending</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #10b981;">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalRevenue">₱0</h3>
+                        <p>Total Revenue</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #8b5cf6;">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="averageRating">0.0</h3>
+                        <p>Average Rating</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Charts Grid -->
+            <div class="analytics-grid">
+                <!-- Bookings Trend Chart -->
+                <div class="card chart-card-large">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-chart-line"></i>
+                            <h3>Bookings Trend</h3>
+                        </div>
+                        <span class="chart-period">Last 7 Days</span>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="bookingsTrendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Revenue Chart -->
+                <div class="card chart-card-medium">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-dollar-sign"></i>
+                            <h3>Revenue Overview</h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Service Distribution Chart -->
+                <div class="card chart-card-medium">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-chart-pie"></i>
+                            <h3>Popular Services</h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="servicesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Top Customers Leaderboard -->
+                <div class="card chart-card-medium">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-trophy"></i>
+                            <h3>Top Customers</h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="leaderboard" id="topCustomersLeaderboard">
+                            <div class="loading">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking Status Distribution -->
+                <div class="card chart-card-medium">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-tasks"></i>
+                            <h3>Booking Status</h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Transaction Analysis Chart -->
+                <div class="card chart-card-medium">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-chart-line"></i>
+                            <h3>Transaction Analysis</h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="transactionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Bookings -->
+        <div class="tab-content" id="tab-bookings">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h3>All Bookings</h3>
+                    </div>
+                    <div class="booking-filters">
+                        <button class="filter-btn active" onclick="filterBookings('all')">All</button>
+                        <button class="filter-btn" onclick="filterBookings('pending')">Pending</button>
+                        <button class="filter-btn" onclick="filterBookings('confirmed')">Confirmed</button>
+                        <button class="filter-btn" onclick="filterBookings('completed')">Completed</button>
+                        <button class="filter-btn" onclick="filterBookings('cancelled')">Cancelled</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="allBookingsContent">
+                        <div class="loading">Loading bookings...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Services -->
+        <div class="tab-content" id="tab-services">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-scissors"></i>
+                        <h3>Manage Services</h3>
+                    </div>
+                    <button class="btn-primary" onclick="showAddServiceModal()">
+                        <i class="fas fa-plus"></i> Add New Service
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="services-list" id="servicesGridFull">
+                        <div class="loading">Loading services...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Transactions -->
+        <div class="tab-content" id="tab-transactions">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-dollar-sign"></i>
+                        <h3>Payment Transactions</h3>
+                    </div>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" onclick="filterTransactions('all')">All</button>
+                        <button class="filter-btn" onclick="filterTransactions('completed')">Completed</button>
+                        <button class="filter-btn" onclick="filterTransactions('pending')">Pending</button>
+                        <button class="filter-btn" onclick="filterTransactions('refunded')">Refunded</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Transaction Stats -->
+                    <div class="transaction-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: #10b981;">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-details">
+                                <p class="stat-label">Total Revenue</p>
+                                <h3 class="stat-value" id="transactionTotalRevenue">₱0.00</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: #f59e0b;">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-details">
+                                <p class="stat-label">Pending Payments</p>
+                                <h3 class="stat-value" id="transactionPendingPayments">₱0.00</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: #6366f1;">
+                                <i class="fas fa-receipt"></i>
+                            </div>
+                            <div class="stat-details">
+                                <p class="stat-label">Total Transactions</p>
+                                <h3 class="stat-value" id="transactionTotalCount">0</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Transactions Table -->
+                    <div class="table-container">
+                        <table class="transactions-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>Service</th>
+                                    <th>Amount</th>
+                                    <th>Payment Status</th>
+                                    <th>Booking Status</th>
+                                    <th>Payment Method</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsTableBody">
+                                <tr>
+                                    <td colspan="7" class="text-center">Loading transactions...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Reviews -->
+        <div class="tab-content" id="tab-reviews">
+            <div class="reviews-header">
+                <h2><i class="fas fa-star"></i> Customer Reviews</h2>
+                <button class="btn-primary" onclick="loadSalonReviews()" style="margin-left: auto;">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+            <div class="reviews-stats">
+                <div class="stat-badge">
+                    <span class="stat-value" id="reviewsAverageRating">0.0</span>
+                    <span class="stat-label">⭐ Average Rating</span>
+                </div>
+                <div class="stat-badge">
+                    <span class="stat-value" id="reviewsTotalCount">0</span>
+                    <span class="stat-label">Total Reviews</span>
+                </div>
+                <div class="stat-badge">
+                    <span class="stat-value" id="reviewsPendingCount">0</span>
+                    <span class="stat-label">⏳ Pending Response</span>
+                </div>
+            </div>
+
+            <!-- Reviews Filter -->
+            <div class="reviews-filters">
+                <button class="filter-btn active" onclick="filterSalonReviews('all')">All Reviews</button>
+                <button class="filter-btn" onclick="filterSalonReviews('5')">⭐⭐⭐⭐⭐</button>
+                <button class="filter-btn" onclick="filterSalonReviews('4')">⭐⭐⭐⭐</button>
+                <button class="filter-btn" onclick="filterSalonReviews('3')">⭐⭐⭐</button>
+                <button class="filter-btn" onclick="filterSalonReviews('2')">⭐⭐</button>
+                <button class="filter-btn" onclick="filterSalonReviews('1')">⭐</button>
+                <button class="filter-btn" onclick="filterSalonReviews('no-response')">No Response</button>
+            </div>
+
+            <!-- Reviews List -->
+            <div class="reviews-container" id="salonReviewsList">
+                <div class="loading">Loading reviews...</div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Salon Info -->
+        <div class="tab-content" id="tab-salon-info">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-store"></i>
+                        <h3>Salon Information</h3>
+                    </div>
+                    <button class="btn-primary" onclick="showEditSalonModal()">
+                        <i class="fas fa-edit"></i> Edit Information
+                    </button>
+                </div>
+                <div class="card-body" id="salonInfoContentFull">
+                    <div class="loading">Loading salon information...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden Tab Content for Future Use -->
+        <div class="tab-content-old" style="display: none;">
+            <!-- Overview Tab -->
+            <div id="overview-tab" class="tab-pane active"></div>
+
+            <!-- Services Tab -->
+            <div id="services-tab" class="tab-pane">
+                <div class="services-header">
+                    <h2>Manage Services</h2>
+                    <button class="btn-primary" onclick="showAddServiceModal()">
+                        <i class="fas fa-plus"></i> Add Service
+                    </button>
+                </div>
+                <div class="services-grid" id="servicesGrid">
+                    <div class="loading">Loading services...</div>
+                </div>
+            </div>
+
+            <!-- Bookings Tab -->
+            <div id="bookings-tab" class="tab-pane">
+                <div class="bookings-header">
+                    <h2>Manage Bookings</h2>
+                    <div class="bookings-filters">
+                        <button class="filter-btn active" onclick="filterBookings('all')">All</button>
+                        <button class="filter-btn" onclick="filterBookings('pending')">Pending</button>
+                        <button class="filter-btn" onclick="filterBookings('confirmed')">Confirmed</button>
+                        <button class="filter-btn" onclick="filterBookings('completed')">Completed</button>
+                    </div>
+                </div>
+                <div class="bookings-list" id="bookingsList">
+                    <div class="empty-message">
+                        <i class="fas fa-calendar-times"></i>
+                        <p>No bookings found</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews Tab -->
+            <div id="reviews-tab" class="tab-pane">
+                <div class="reviews-header">
+                    <h2>Customer Reviews</h2>
+                    <div class="reviews-summary">
+                        <div class="rating-overview">
+                            <div class="rating-number" id="reviewsRating">0.0</div>
+                            <div class="rating-stars" id="reviewsStars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="rating-count" id="reviewsCount">0 reviews</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="reviews-list" id="reviewsList">
+                    <div class="empty-message">
+                        <i class="fas fa-comment-slash"></i>
+                        <p>No reviews yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Edit Salon Modal -->
+    <div id="editSalonModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditSalonModal()">&times;</span>
+            <div class="modal-body">
+                <h2>Edit Salon Profile</h2>
+                <form id="editSalonForm">
+                    <div class="form-group">
+                        <label>Salon Name *</label>
+                        <input type="text" id="editSalonName" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" id="editSalonEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone *</label>
+                            <input type="tel" id="editSalonPhone" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Website</label>
+                        <input type="url" id="editSalonWebsite">
+                    </div>
+                    <div class="form-group">
+                        <label>Description *</label>
+                        <textarea id="editSalonDescription" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Address *</label>
+                        <textarea id="editSalonAddress" rows="2" required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>City *</label>
+                            <input type="text" id="editSalonCity" required>
+                        </div>
+                        <div class="form-group">
+                            <label>State *</label>
+                            <input type="text" id="editSalonState" required>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" onclick="closeEditSalonModal()">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Service Modal -->
+    <div id="addServiceModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddServiceModal()">&times;</span>
+            <div class="modal-body">
+                <h2 style="color: #fff;">Add New Service</h2>
+                <form id="addServiceForm">
+                    <div class="form-group">
+                        <label style="color: #e0e0e0;">Service Name *</label>
+                        <input type="text" id="serviceName" required placeholder="e.g., Haircut">
+                    </div>
+                    <div class="form-group">
+                        <label style="color: #e0e0e0;">Description *</label>
+                        <textarea id="serviceDescription" rows="3" required placeholder="Describe your service..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label style="color: #e0e0e0;">Price (₱) *</label>
+                            <input type="number" id="servicePrice" required min="0" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label style="color: #e0e0e0;">Duration (minutes) *</label>
+                            <input type="number" id="serviceDuration" required min="15" step="15" placeholder="60">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label style="color: #e0e0e0;">Service Images</label>
+                        <div class="image-upload-container">
+                            <input type="file" id="serviceImages" multiple accept="image/*" style="display: none;">
+                            <button type="button" class="btn-upload" onclick="document.getElementById('serviceImages').click()">
+                                <i class="fas fa-camera"></i> Add Photos (Multiple)
+                            </button>
+                            <div id="imagePreviewContainer" class="image-preview-grid"></div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" onclick="closeAddServiceModal()">Cancel</button>
+                        <button type="submit" class="btn-primary">Add Service</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Service Modal -->
+    <div id="editServiceModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditServiceModal()">&times;</span>
+            <div class="modal-body">
+                <h2 style="color: #fff;">Edit Service</h2>
+                <form id="editServiceForm">
+                    <input type="hidden" id="editServiceId">
+                    <div class="form-group">
+                        <label style="color: #e0e0e0;">Service Name *</label>
+                        <input type="text" id="editServiceName" required placeholder="e.g., Haircut">
+                    </div>
+                    <div class="form-group">
+                        <label style="color: #e0e0e0;">Description *</label>
+                        <textarea id="editServiceDescription" rows="3" required placeholder="Describe your service..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label style="color: #e0e0e0;">Price (₱) *</label>
+                            <input type="number" id="editServicePrice" required min="0" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label style="color: #e0e0e0;">Duration (minutes) *</label>
+                            <input type="number" id="editServiceDuration" required min="15" step="15" placeholder="60">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label style="color: #e0e0e0;">Existing Images</label>
+                        <div id="existingServiceImages" class="existing-images-grid"></div>
+                    </div>
+                    <div class="form-group">
+                        <label style="color: #e0e0e0;">Add New Images</label>
+                        <div class="image-upload-container">
+                            <input type="file" id="editServiceImages" multiple accept="image/*" style="display: none;">
+                            <button type="button" class="btn-upload" onclick="document.getElementById('editServiceImages').click()">
+                                <i class="fas fa-camera"></i> Add More Photos
+                            </button>
+                            <div id="editImagePreviewContainer" class="image-preview-grid"></div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" onclick="closeEditServiceModal()">Cancel</button>
+                        <button type="submit" class="btn-primary">Update Service</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Details Modal -->
+    <div id="bookingDetailsModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <span class="close" onclick="closeBookingDetailsModal()">&times;</span>
+            <div id="bookingDetailsContent">
+                <!-- Content will be loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script src="/reviews.js"></script>
+    <script src="/salon-owner-dashboard.js"></script>
+    <script src="/chat.js"></script>
+</body>
+</html>

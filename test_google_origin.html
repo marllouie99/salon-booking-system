@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google OAuth Origin Test</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <h1>Google OAuth Configuration Test</h1>
+    <p>Client ID: 283246214071-eqctr8egt9snucarjlsig6o2rbg9aqe2.apps.googleusercontent.com</p>
+    <p>Testing from: <span id="origin"></span></p>
+    
+    <div id="g_id_onload"
+         data-client_id="283246214071-eqctr8egt9snucarjlsig6o2rbg9aqe2.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse">
+    </div>
+    <div class="g_id_signin" data-type="standard"></div>
+    
+    <div id="status" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc;">
+        <h3>Status:</h3>
+        <p id="message">Waiting for Google Sign-In button to load...</p>
+    </div>
+
+    <script>
+        document.getElementById('origin').textContent = window.location.origin;
+        
+        function handleCredentialResponse(response) {
+            document.getElementById('message').innerHTML = 
+                '<span style="color: green;">✅ SUCCESS! Google Sign-In is working!</span><br>' +
+                'Token received (first 50 chars): ' + response.credential.substring(0, 50) + '...';
+        }
+        
+        // Check if Google Sign-In loaded
+        setTimeout(() => {
+            if (typeof google !== 'undefined' && google.accounts) {
+                document.getElementById('message').innerHTML = 
+                    '<span style="color: blue;">✅ Google Sign-In library loaded successfully!</span><br>' +
+                    'Click the button above to test authentication.';
+            } else {
+                document.getElementById('message').innerHTML = 
+                    '<span style="color: red;">❌ Google Sign-In library failed to load</span>';
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

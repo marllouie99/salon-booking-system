@@ -1,0 +1,216 @@
+/* ============================================
+   UNIFIED THEME VARIABLES - RED, BLACK & WHITE
+   ============================================
+   This file contains all theme variables used
+   across the salon booking system.
+   Import this in other CSS files to maintain
+   consistency and avoid duplication.
+   ============================================ */
+
+:root {
+    /* ==================== PRIMARY COLORS ==================== */
+    /* Red Colors */
+    --primary-red: #dc3545;
+    --primary-red-dark: #c82333;
+    --primary-red-light: #ff4757;
+    --primary-red-lighter: #ff6b7a;
+    --primary-red-alpha: rgba(220, 53, 69, 0.1);
+    --primary-red-alpha-20: rgba(220, 53, 69, 0.2);
+    --primary-red-alpha-30: rgba(220, 53, 69, 0.3);
+    --primary-red-shadow: rgba(220, 53, 69, 0.3);
+    
+    /* Black Colors */
+    --black-dark: #000000;
+    --black-medium: #1a1a1a;
+    --black-light: #2a2a2a;
+    --black-lighter: #3a3a3a;
+    --black-alpha: rgba(0, 0, 0, 0.95);
+    --black-alpha-dark: rgba(10, 10, 10, 1);
+    
+    /* White Colors */
+    --white: #ffffff;
+    --white-alpha: rgba(255, 255, 255, 0.95);
+    --white-smoke: #f8f9fa;
+    --white-alpha-10: rgba(255, 255, 255, 0.1);
+    
+    /* ==================== GRAY SCALE ==================== */
+    --gray-lightest: #f5f5f5;
+    --gray-lighter: #e5e5e5;
+    --gray-light: #cccccc;
+    --gray-medium: #999999;
+    --gray-dark: #666666;
+    --gray-darker: #333333;
+    
+    /* ==================== GRADIENTS ==================== */
+    --gradient-red: linear-gradient(45deg, var(--primary-red), var(--primary-red-dark));
+    --gradient-red-light: linear-gradient(45deg, var(--primary-red), var(--primary-red-light));
+    --gradient-red-reverse: linear-gradient(45deg, var(--primary-red-dark), var(--primary-red));
+    --gradient-black: linear-gradient(135deg, var(--black-medium) 0%, var(--black-dark) 100%);
+    --gradient-black-light: linear-gradient(135deg, var(--black-light) 0%, var(--black-medium) 100%);
+    
+    /* ==================== SHADOWS ==================== */
+    --shadow-red: 0 10px 25px var(--primary-red-shadow);
+    --shadow-red-light: 0 4px 20px rgba(220, 53, 69, 0.1);
+    --shadow-red-medium: 0 8px 20px rgba(220, 53, 69, 0.4);
+    --shadow-black: 0 2px 10px rgba(0, 0, 0, 0.5);
+    --shadow-black-light: 0 2px 10px rgba(0, 0, 0, 0.05);
+    --shadow-card: 0 4px 20px rgba(220, 53, 69, 0.1);
+    --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.5);
+    
+    /* ==================== BORDERS ==================== */
+    --border-red: 1px solid var(--primary-red);
+    --border-red-thin: 1px solid var(--primary-red-alpha-20);
+    --border-red-medium: 2px solid var(--primary-red);
+    --border-red-alpha: 1px solid var(--primary-red-alpha);
+    --border-red-alpha-20: 1px solid var(--primary-red-alpha-20);
+    --border-red-alpha-30: 1px solid var(--primary-red-alpha-30);
+    
+    /* ==================== SPACING ==================== */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+    --spacing-3xl: 4rem;
+    
+    /* ==================== BORDER RADIUS ==================== */
+    --radius-sm: 8px;
+    --radius-md: 10px;
+    --radius-lg: 15px;
+    --radius-xl: 20px;
+    --radius-2xl: 25px;
+    --radius-full: 50px;
+    --radius-circle: 50%;
+    
+    /* ==================== TYPOGRAPHY ==================== */
+    --font-family-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.85rem;
+    --font-size-base: 0.9rem;
+    --font-size-md: 1rem;
+    --font-size-lg: 1.1rem;
+    --font-size-xl: 1.2rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 2rem;
+    --font-size-4xl: 2.5rem;
+    
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    
+    /* ==================== TRANSITIONS ==================== */
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    --transition-all: all 0.3s ease;
+    
+    /* ==================== Z-INDEX LAYERS ==================== */
+    --z-dropdown: 1000;
+    --z-sticky: 1000;
+    --z-fixed: 1020;
+    --z-modal-backdrop: 1040;
+    --z-modal: 2000;
+    --z-notification: 3000;
+    --z-tooltip: 4000;
+    
+    /* ==================== STATUS COLORS ==================== */
+    /* Success - Green */
+    --success-color: #10b981;
+    --success-dark: #059669;
+    --success-light: #34d399;
+    --success-alpha: rgba(16, 185, 129, 0.1);
+    
+    /* Warning - Yellow/Orange */
+    --warning-color: #ffc107;
+    --warning-dark: #ff9800;
+    --warning-light: #ffd54f;
+    --warning-alpha: rgba(255, 193, 7, 0.2);
+    
+    /* Error/Danger - Red (using primary red) */
+    --danger-color: var(--primary-red);
+    --danger-dark: var(--primary-red-dark);
+    --danger-light: var(--primary-red-light);
+    --danger-alpha: var(--primary-red-alpha);
+    
+    /* Info - Cyan/Blue */
+    --info-color: #17a2b8;
+    --info-dark: #138496;
+    --info-light: #3ab7cc;
+    --info-alpha: rgba(23, 162, 184, 0.1);
+    
+    /* Cancelled/Disabled - Gray */
+    --cancelled-color: #6c757d;
+    --cancelled-alpha: rgba(108, 117, 125, 0.2);
+    
+    /* Star Rating - Gold */
+    --star-color: #ffc107;
+    --star-filled: #fbbf24;
+    
+    /* ==================== COMPONENT SPECIFIC ==================== */
+    /* Buttons */
+    --btn-padding-sm: 0.5rem 1rem;
+    --btn-padding-base: 0.75rem 1.5rem;
+    --btn-padding-lg: 1rem 2rem;
+    
+    /* Cards */
+    --card-bg: var(--black-medium);
+    --card-border: var(--border-red-alpha-20);
+    --card-shadow: var(--shadow-card);
+    --card-radius: var(--radius-lg);
+    --card-padding: var(--spacing-lg);
+    
+    /* Forms */
+    --input-bg: var(--black-medium);
+    --input-border: 2px solid var(--primary-red-alpha-20);
+    --input-border-focus: 2px solid var(--primary-red);
+    --input-text: var(--white);
+    --input-placeholder: var(--gray-medium);
+    --input-radius: var(--radius-md);
+    --input-padding: 0.75rem 1rem;
+    
+    /* Modal */
+    --modal-bg: var(--black-medium);
+    --modal-border: var(--border-red-alpha-30);
+    --modal-shadow: var(--shadow-modal);
+    --modal-backdrop: rgba(0, 0, 0, 0.6);
+    
+    /* Header/Navigation */
+    --header-bg: var(--black-dark);
+    --header-border: var(--border-red-medium);
+    --header-shadow: 0 2px 10px var(--primary-red-shadow);
+    --nav-link-color: var(--white);
+    --nav-link-hover: var(--primary-red);
+    --nav-link-active: var(--primary-red);
+}
+
+/* ==================== UTILITY CLASSES ==================== */
+/* These classes can be used across the application */
+
+/* Text Colors */
+.text-primary { color: var(--primary-red); }
+.text-white { color: var(--white); }
+.text-gray-light { color: var(--gray-light); }
+.text-gray-medium { color: var(--gray-medium); }
+.text-gray-dark { color: var(--gray-dark); }
+.text-success { color: var(--success-color); }
+.text-warning { color: var(--warning-color); }
+.text-danger { color: var(--danger-color); }
+
+/* Background Colors */
+.bg-primary { background: var(--primary-red); }
+.bg-primary-gradient { background: var(--gradient-red); }
+.bg-black { background: var(--black-dark); }
+.bg-black-medium { background: var(--black-medium); }
+.bg-black-light { background: var(--black-light); }
+
+/* Shadows */
+.shadow-red { box-shadow: var(--shadow-red); }
+.shadow-card { box-shadow: var(--shadow-card); }
+.shadow-black { box-shadow: var(--shadow-black); }
+
+/* Borders */
+.border-red { border: var(--border-red); }
+.border-red-thin { border: var(--border-red-thin); }
+.border-red-alpha { border: var(--border-red-alpha); }

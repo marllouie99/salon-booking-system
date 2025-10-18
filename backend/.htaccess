@@ -1,0 +1,31 @@
+# Passenger configuration for Hostinger
+PassengerEnabled on
+PassengerAppRoot /home/u842241420/public_html/backend
+PassengerBaseURI /
+PassengerAppType wsgi
+PassengerStartupFile passenger_wsgi.py
+PassengerPython /home/u842241420/virtualenv/salon_booking/3.9/bin/python3
+
+# Static and Media files
+Alias /static /home/u842241420/public_html/backend/staticfiles
+Alias /media /home/u842241420/public_html/backend/media
+
+<Directory /home/u842241420/public_html/backend/staticfiles>
+    Require all granted
+</Directory>
+
+<Directory /home/u842241420/public_html/backend/media>
+    Require all granted
+</Directory>
+
+# Force HTTPS (recommended for production)
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# CORS headers for API
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+</IfModule>

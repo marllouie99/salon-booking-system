@@ -1,0 +1,70 @@
+<!-- Shared Navigation Bar Component -->
+<header>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-cut"></i>
+                <span>Salon Booking</span>
+            </div>
+            <div class="nav-right">
+                <button class="nav-link" onclick="window.location.href='/home'">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </button>
+                <button class="nav-link" onclick="window.location.href='/my-bookings.html'">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>My Bookings</span>
+                </button>
+                <button class="btn-apply-salon" id="salonActionBtn" onclick="handleSalonAction()">
+                    <i class="fas fa-store"></i>
+                    <span id="salonBtnText">Apply for Salon</span>
+                </button>
+                
+                <!-- Notification Bell -->
+                <div class="notification-container">
+                    <button class="notification-bell" id="notificationBell" onclick="toggleNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge" style="display: none;">1</span>
+                    </button>
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-header">
+                            <h4>Notifications</h4>
+                            <button class="mark-all-read" onclick="markAllNotificationsRead()">
+                                <i class="fas fa-check-double"></i> Mark all read
+                            </button>
+                        </div>
+                        <div class="notification-list" id="notificationList">
+                            <div class="no-notifications">
+                                <i class="fas fa-bell-slash"></i>
+                                <p>No notifications</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="nav-user">
+                    <div class="user-info" onclick="toggleUserMenu()">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                            <span class="profile-warning-badge" id="avatarWarningBadge" style="display: none;">
+                                <i class="fas fa-exclamation"></i>
+                            </span>
+                        </div>
+                        <span class="user-name" id="userName">User</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="/profile.html" id="profileLink">
+                            <i class="fas fa-user-circle"></i> Profile
+                            <span class="dropdown-warning-badge" id="profileWarningBadge" style="display: none;">
+                                <i class="fas fa-exclamation-circle"></i> Incomplete
+                            </span>
+                        </a>
+                        <a href="/profile.html"><i class="fas fa-cog"></i> Settings</a>
+                        <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>

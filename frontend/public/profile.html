@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Salon Booking System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Shared Navbar CSS -->
+    <link rel="stylesheet" href="/components/navbar.css">
+    
+    <!-- Page-Specific CSS (load before modal styles to allow override) -->
+    <link rel="stylesheet" href="profile.css">
+    
+    <!-- Modal Styles (needed for salon application modal - load AFTER profile.css) -->
+    <link rel="stylesheet" href="/customer-home.css">
+</head>
+<body>
+    <!-- Load Navbar Component -->
+    <script>
+        fetch('/components/navbar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.body.insertAdjacentHTML('afterbegin', html);
+                const script = document.createElement('script');
+                script.src = '/components/navbar.js';
+                document.head.appendChild(script);
+            });
+    </script>
+
+    <!-- Profile Container -->
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1><i class="fas fa-user-circle"></i> My Profile</h1>
+            <p>Manage your account information and preferences</p>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="profile-content">
+            <!-- Profile Sidebar -->
+            <div class="profile-sidebar">
+                <div class="profile-avatar">
+                    <div class="avatar-circle" id="avatarCircle">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <button class="btn-change-avatar" onclick="changeAvatar()">
+                        <i class="fas fa-camera"></i> Change Photo
+                    </button>
+                    <input type="file" id="avatarInput" accept="image/*" style="display: none;" onchange="handleAvatarChange(event)">
+                </div>
+
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-calendar-check"></i>
+                        <div>
+                            <span class="stat-number" id="totalBookings">0</span>
+                            <span class="stat-label">Total Bookings</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <span class="stat-number" id="memberSince">-</span>
+                            <span class="stat-label">Member Since</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Main Content -->
+            <div class="profile-main">
+                <!-- Personal Information Section -->
+                <div class="profile-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-user-edit"></i> Personal Information</h2>
+                        <button class="btn-edit" id="editPersonalBtn" onclick="toggleEditMode('personal')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+
+                    <form id="personalInfoForm" class="profile-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">
+                                    <i class="fas fa-user"></i> First Name
+                                </label>
+                                <input type="text" id="firstName" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">
+                                    <i class="fas fa-user"></i> Last Name
+                                </label>
+                                <input type="text" id="lastName" disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">
+                                    <i class="fas fa-envelope"></i> Email
+                                </label>
+                                <input type="email" id="email" disabled>
+                                <small class="form-hint">
+                                    <i class="fas fa-check-circle"></i> Verified
+                                </small>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">
+                                    <i class="fas fa-phone"></i> Phone Number
+                                </label>
+                                <input type="tel" id="phone" disabled placeholder="Enter your phone number">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="address">
+                                    <i class="fas fa-map-marker-alt"></i> Address
+                                </label>
+                                <textarea id="address" rows="3" disabled placeholder="Enter your complete address"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-actions" id="personalActions" style="display: none;">
+                            <button type="button" class="btn btn-secondary" onclick="cancelEdit('personal')">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Account Security Section -->
+                <div class="profile-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-lock"></i> Account Security</h2>
+                        <button class="btn-edit" id="editPasswordBtn" onclick="toggleEditMode('password')">
+                            <i class="fas fa-key"></i> Change Password
+                        </button>
+                    </div>
+
+                    <form id="passwordForm" class="profile-form" style="display: none;">
+                        <div class="form-group">
+                            <label for="currentPassword">
+                                <i class="fas fa-lock"></i> Current Password
+                            </label>
+                            <input type="password" id="currentPassword" placeholder="Enter current password">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newPassword">
+                                <i class="fas fa-key"></i> New Password
+                            </label>
+                            <input type="password" id="newPassword" placeholder="Enter new password">
+                            <small class="form-hint">Must be at least 8 characters</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword">
+                                <i class="fas fa-check"></i> Confirm New Password
+                            </label>
+                            <input type="password" id="confirmPassword" placeholder="Confirm new password">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="cancelEdit('password')">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Update Password
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="passwordInfo" class="info-box">
+                        <i class="fas fa-shield-alt"></i>
+                        <div>
+                            <strong>Password Protection</strong>
+                            <p>Your password is encrypted and secure. Change it regularly to keep your account safe.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Preferences Section -->
+                <div class="profile-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-cog"></i> Preferences</h2>
+                    </div>
+
+                    <div class="preferences-list">
+                        <div class="preference-item">
+                            <div class="preference-info">
+                                <i class="fas fa-bell"></i>
+                                <div>
+                                    <strong>Email Notifications</strong>
+                                    <p>Receive booking confirmations and reminders</p>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="emailNotifications" checked onchange="updatePreference('emailNotifications')">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="preference-item">
+                            <div class="preference-info">
+                                <i class="fas fa-envelope"></i>
+                                <div>
+                                    <strong>Marketing Emails</strong>
+                                    <p>Receive special offers and promotions</p>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="marketingEmails" onchange="updatePreference('marketingEmails')">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="preference-item">
+                            <div class="preference-info">
+                                <i class="fas fa-mobile-alt"></i>
+                                <div>
+                                    <strong>SMS Reminders</strong>
+                                    <p>Get text message reminders for appointments</p>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="smsReminders" onchange="updatePreference('smsReminders')">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="profile-section danger-zone">
+                    <div class="section-header">
+                        <h2><i class="fas fa-exclamation-triangle"></i> Danger Zone</h2>
+                    </div>
+
+                    <div class="danger-actions">
+                        <div class="danger-item">
+                            <div>
+                                <strong>Delete Account</strong>
+                                <p>Permanently delete your account and all associated data</p>
+                            </div>
+                            <button class="btn btn-danger" onclick="confirmDeleteAccount()">
+                                <i class="fas fa-trash-alt"></i> Delete Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer"></div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Delete Account</h3>
+                <button class="close-btn" onclick="closeDeleteModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+                <p><strong>All your data will be permanently deleted:</strong></p>
+                <ul>
+                    <li>Personal information</li>
+                    <li>Booking history</li>
+                    <li>Preferences</li>
+                </ul>
+                <div class="form-group">
+                    <label>Type "DELETE" to confirm:</label>
+                    <input type="text" id="deleteConfirmation" placeholder="DELETE">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="deleteAccount()">Delete My Account</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="profile.js"></script>
+</body>
+</html>

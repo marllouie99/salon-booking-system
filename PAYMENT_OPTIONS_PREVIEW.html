@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Options Preview</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: #1a1a1a;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        h1 {
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .payment-options-section {
+            margin-top: 2rem;
+        }
+
+        .section-title {
+            color: #ffffff;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .payment-options-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 1024px) {
+            .payment-options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .payment-option-card {
+            padding: 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        .payment-option-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .payment-option-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-option-header h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: #1a202c;
+        }
+
+        .payment-option-card p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin: 0.5rem 0 1rem 0;
+            line-height: 1.5;
+        }
+
+        .btn-submit-stripe,
+        .btn-submit-alt,
+        .btn-paypal {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            font-size: 0.95rem;
+        }
+
+        .btn-paypal {
+            background: #ffc439;
+            color: #003087;
+        }
+
+        .btn-paypal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 196, 57, 0.3);
+        }
+
+        .btn-submit-stripe {
+            background: linear-gradient(45deg, #6366f1, #4f46e5);
+            color: white;
+        }
+
+        .btn-submit-stripe:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-submit-alt {
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-submit-alt:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .badge-instant {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-flexible {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-top: 1rem;
+            padding: 0;
+        }
+
+        .feature-list li {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-list li i {
+            color: #10b981;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-calendar-check"></i> Book Appointment</h1>
+        <p class="subtitle">Choose your preferred payment method</p>
+
+        <div class="payment-options-section">
+            <h3 class="section-title">
+                <i class="fas fa-credit-card"></i> Payment Options
+            </h3>
+            <div class="payment-options-grid">
+                <!-- PayPal Option -->
+                <div class="payment-option-card">
+                    <div class="payment-option-header">
+                        <i class="fab fa-paypal" style="color: #0070ba; font-size: 1.5rem;"></i>
+                        <h4>Pay Now with PayPal</h4>
+                    </div>
+                    <p>
+                        Secure payment with PayPal. Your booking will be confirmed instantly.
+                    </p>
+                    <span class="badge badge-instant">
+                        <i class="fas fa-bolt"></i> Instant Confirmation
+                    </span>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check-circle"></i> PayPal account or card</li>
+                        <li><i class="fas fa-check-circle"></i> Buyer protection</li>
+                        <li><i class="fas fa-check-circle"></i> Instant booking</li>
+                    </ul>
+                    <button class="btn-paypal" style="margin-top: 1rem;">
+                        <i class="fab fa-paypal"></i> PayPal
+                    </button>
+                </div>
+                
+                <!-- Credit Card Option (NEW) -->
+                <div class="payment-option-card" style="border-color: #6366f1;">
+                    <div class="payment-option-header">
+                        <i class="fas fa-credit-card" style="color: #6366f1; font-size: 1.5rem;"></i>
+                        <h4>Pay with Credit Card</h4>
+                    </div>
+                    <p>
+                        Secure payment with Stripe. Your booking will be confirmed instantly.
+                    </p>
+                    <span class="badge badge-instant">
+                        <i class="fas fa-bolt"></i> Instant Confirmation
+                    </span>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check-circle"></i> All major cards accepted</li>
+                        <li><i class="fas fa-check-circle"></i> Secure encryption</li>
+                        <li><i class="fas fa-check-circle"></i> Instant booking</li>
+                    </ul>
+                    <button class="btn-submit-stripe" style="margin-top: 1rem;">
+                        <i class="fas fa-lock"></i> Pay with Card
+                    </button>
+                </div>
+                
+                <!-- Pay Later Option -->
+                <div class="payment-option-card">
+                    <div class="payment-option-header">
+                        <i class="fas fa-clock" style="color: #10b981; font-size: 1.5rem;"></i>
+                        <h4>Pay Later at Salon</h4>
+                    </div>
+                    <p>
+                        Reserve your appointment and pay when you arrive at the salon.
+                    </p>
+                    <span class="badge badge-flexible">
+                        <i class="fas fa-calendar"></i> Flexible Payment
+                    </span>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check-circle"></i> No upfront payment</li>
+                        <li><i class="fas fa-check-circle"></i> Cash or card at salon</li>
+                        <li><i class="fas fa-check-circle"></i> Easy cancellation</li>
+                    </ul>
+                    <button class="btn-submit-alt" style="margin-top: 1rem;">
+                        <i class="fas fa-calendar-check"></i> Book Now (Pay Later)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem; padding: 1rem; background: rgba(99, 102, 241, 0.1); border-radius: 10px; border-left: 4px solid #6366f1;">
+            <p style="color: #e2e8f0; font-size: 0.9rem; margin: 0;">
+                <i class="fas fa-info-circle" style="color: #6366f1;"></i>
+                <strong>NEW:</strong> You can now pay with credit card using Stripe for instant booking confirmation!
+            </p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!-- Salon Application Modal -->
+<div id="salonApplicationModal" class="modal salon-apply-modal">
+    <div class="modal-content modal-large">
+        <span class="close" onclick="closeSalonApplicationModal()">&times;</span>
+        <div class="modal-body">
+            <div class="application-header">
+                <i class="fas fa-store-alt" style="font-size: 3rem; color: #667eea;"></i>
+                <h2>Apply for Salon Partnership</h2>
+                <p>Join our network of premium salons and grow your business</p>
+            </div>
+
+            <form id="salonApplicationForm" class="salon-form">
+                <div class="form-section">
+                    <h3><i class="fas fa-building"></i> Salon Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Salon Name *</label>
+                            <input type="text" id="salonName" required placeholder="Enter your salon name">
+                        </div>
+                        <div class="form-group">
+                            <label>Business Email *</label>
+                            <input type="email" id="businessEmail" required placeholder="salon@example.com">
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Phone Number *</label>
+                            <input type="tel" id="salonPhone" required placeholder="+1 (555) 123-4567">
+                        </div>
+                        <div class="form-group">
+                            <label>Website</label>
+                            <input type="url" id="salonWebsite" placeholder="https://www.yoursalon.com">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-map-marker-alt"></i> Location</h3>
+                    <div class="form-group">
+                        <label>Full Address *</label>
+                        <textarea id="salonAddress" required rows="3" placeholder="Street address, building number, floor"></textarea>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Province *</label>
+                            <div class="searchable-select-wrapper">
+                                <input type="text" 
+                                       id="salonState" 
+                                       class="searchable-select-input" 
+                                       placeholder="Search province..." 
+                                       autocomplete="off"
+                                       required>
+                                <i class="fas fa-chevron-down searchable-select-icon"></i>
+                                <div class="searchable-select-dropdown" id="provinceDropdown"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>City/Municipality *</label>
+                            <div class="searchable-select-wrapper">
+                                <input type="text" 
+                                       id="salonCity" 
+                                       class="searchable-select-input" 
+                                       placeholder="Select province first..." 
+                                       autocomplete="off"
+                                       required
+                                       disabled>
+                                <i class="fas fa-chevron-down searchable-select-icon"></i>
+                                <div class="searchable-select-dropdown" id="cityDropdown"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Postal Code *</label>
+                            <input type="text" id="salonPostal" required placeholder="e.g. 1000">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-scissors"></i> Services Offered</h3>
+                    <div class="services-checkboxes">
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="services" value="haircut">
+                            <span><i class="fas fa-cut"></i> Haircut & Styling</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="services" value="coloring">
+                            <span><i class="fas fa-paint-brush"></i> Hair Coloring</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="services" value="spa">
+                            <span><i class="fas fa-spa"></i> Spa & Facial</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="services" value="nails">
+                            <span><i class="fas fa-hand-sparkles"></i> Manicure & Pedicure</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="services" value="makeup">
+                            <span><i class="fas fa-magic"></i> Makeup</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="services" value="bridal">
+                            <span><i class="fas fa-crown"></i> Bridal Services</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="services" value="massage">
+                            <span><i class="fas fa-hands"></i> Massage</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="services" value="waxing">
+                            <span><i class="fas fa-leaf"></i> Waxing</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-info-circle"></i> Additional Details</h3>
+                    <div class="form-group">
+                        <label>Description *</label>
+                        <textarea id="salonDescription" required rows="4" placeholder="Tell us about your salon, what makes it unique..."></textarea>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Years in Business *</label>
+                            <input type="number" id="yearsInBusiness" required min="0" placeholder="5">
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Staff *</label>
+                            <input type="number" id="staffCount" required min="1" placeholder="10">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Why do you want to join SalonBook?</label>
+                        <textarea id="applicationReason" rows="3" placeholder="Share your reasons for joining our platform..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <label class="checkbox-option terms-checkbox">
+                        <input type="checkbox" id="agreeTerms" required>
+                        <span>I agree to the <a href="#" target="_blank">Terms and Conditions</a> and <a href="#" target="_blank">Partnership Agreement</a></span>
+                    </label>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="closeSalonApplicationModal()">Cancel</button>
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-paper-plane"></i> Submit Application
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
