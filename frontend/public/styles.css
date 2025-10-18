@@ -528,3 +528,52 @@ body {
         gap: 0.3rem;
     }
 }
+
+/* Notification styles (moved from script.js) */
+.notification {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    color: white;
+    font-weight: 600;
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 300px;
+    animation: slideInRight 0.3s ease;
+}
+
+.notification-success {
+    background: linear-gradient(45deg, #28a745, #20c997);
+}
+
+.notification-error {
+    background: linear-gradient(45deg, #dc3545, #fd7e14);
+}
+
+.notification-info {
+    background: linear-gradient(45deg, #17a2b8, #6f42c1);
+}
+
+.notification button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-left: 1rem;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

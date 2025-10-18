@@ -235,7 +235,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     try {
         showNotification('Creating account...', 'info');
         
-        const response = await fetch(`${window.API_BASE_URL}/api/accounts/register/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/register/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -289,61 +289,7 @@ function showNotification(message, type = 'info') {
     }, 5000);
 }
 
-// Add notification styles dynamically
-const notificationStyles = `
-    .notification {
-        position: fixed;
-        top: 100px;
-        right: 20px;
-        padding: 1rem 1.5rem;
-        border-radius: 10px;
-        color: white;
-        font-weight: 600;
-        z-index: 3000;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        min-width: 300px;
-        animation: slideInRight 0.3s ease;
-    }
-    
-    .notification-success {
-        background: linear-gradient(45deg, #28a745, #20c997);
-    }
-    
-    .notification-error {
-        background: linear-gradient(45deg, #dc3545, #fd7e14);
-    }
-    
-    .notification-info {
-        background: linear-gradient(45deg, #17a2b8, #6f42c1);
-    }
-    
-    .notification button {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 1.2rem;
-        cursor: pointer;
-        margin-left: 1rem;
-    }
-    
-    @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(100%);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-`;
-
-// Add styles to head
-const styleSheet = document.createElement('style');
-styleSheet.textContent = notificationStyles;
-document.head.appendChild(styleSheet);
+// Notification styles are defined in styles.css
 
 // Smooth scrolling for navigation
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -476,7 +422,7 @@ document.getElementById('verificationForm').addEventListener('submit', async fun
     try {
         showNotification('Verifying...', 'info');
         
-        const response = await fetch(`${window.API_BASE_URL}/api/accounts/verify-email/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/verify-email/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -539,7 +485,7 @@ async function resendVerificationCode() {
         resendBtn.disabled = true;
         showNotification('Sending new code...', 'info');
         
-        const response = await fetch(`${window.API_BASE_URL}/api/accounts/resend-verification/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/resend-verification/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -598,7 +544,7 @@ document.getElementById('forgotPasswordForm').addEventListener('submit', async f
     try {
         showNotification('Sending reset code...', 'info');
         
-        const response = await fetch(`${window.API_BASE_URL}/api/accounts/request-password-reset/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/request-password-reset/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -702,7 +648,7 @@ document.getElementById('resetCodeForm').addEventListener('submit', async functi
     try {
         showNotification('Verifying code...', 'info');
         
-        const response = await fetch(`${window.API_BASE_URL}/api/accounts/verify-reset-code/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/verify-reset-code/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -762,7 +708,7 @@ document.getElementById('newPasswordForm').addEventListener('submit', async func
     try {
         showNotification('Resetting password...', 'info');
         
-        const response = await fetch(`${window.API_BASE_URL}/api/accounts/reset-password/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/reset-password/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -806,7 +752,7 @@ async function resendResetCode() {
     try {
         showNotification('Sending new code...', 'info');
         
-        const response = await fetch(`${window.API_BASE_URL}/api/accounts/request-password-reset/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/request-password-reset/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
