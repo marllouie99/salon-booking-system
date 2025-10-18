@@ -11,7 +11,7 @@ async function refreshAccessToken() {
     }
     
     try {
-        const response = await fetch('http://localhost:8000/api/token/refresh/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/token/refresh/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -134,7 +134,7 @@ function checkOwnerAuth() {
     if (userData.user_type !== 'salon_owner') {
         showNotification('You must be a salon owner to access this page', 'error');
         setTimeout(() => {
-            window.location.href = '/home';
+            window.location.href = '/customer-home.html';
         }, 2000);
     }
 }

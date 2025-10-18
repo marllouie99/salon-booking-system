@@ -228,12 +228,12 @@ function displayFeaturedSalons(salons) {
         
         // Handle cover image - use salon's cover_image if available, otherwise use placeholder
         const coverImage = salon.cover_image 
-            ? `http://localhost:8000${salon.cover_image}` 
+            ? `${window.API_BASE_URL}${salon.cover_image}` 
             : 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=250&fit=crop';
         
         // Handle logo - use salon's logo if available, otherwise use placeholder
         const logoImage = salon.logo 
-            ? `http://localhost:8000${salon.logo}` 
+            ? `${window.API_BASE_URL}${salon.logo}` 
             : 'https://via.placeholder.com/80x80?text=' + encodeURIComponent(salon.name.charAt(0));
         
         return `
@@ -494,8 +494,8 @@ function handleSearch() {
 function showSalonApplicationModal() {
     const modal = document.getElementById('salonApplicationModal');
     if (!modal) {
-        // Modal doesn't exist on this page, redirect to home page
-        window.location.href = '/home#apply-salon';
+        // Modal doesn't exist on this page, redirect to customer home page
+        window.location.href = '/customer-home.html#apply-salon';
         return;
     }
     modal.classList.add('show');

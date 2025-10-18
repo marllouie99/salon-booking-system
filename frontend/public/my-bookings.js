@@ -25,7 +25,13 @@ function checkAuth() {
     const userData = JSON.parse(localStorage.getItem('user_data'));
     
     if (!userData) {
-        window.location.href = '/';
+        // Add grace period for just-redirected logins
+        setTimeout(() => {
+            const retryUserData = JSON.parse(localStorage.getItem('user_data'));
+            if (!retryUserData) {
+                window.location.href = '/';
+            }
+        }, 700);
         return;
     }
 }
@@ -59,7 +65,7 @@ async function loadMyBookings() {
     try {
         const accessToken = localStorage.getItem('access_token');
         
-        const response = await fetch('http://localhost:8000/api/bookings/my-bookings/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/bookings/my-bookings/`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }
@@ -215,7 +221,7 @@ function showEmptyState() {
             <h3>No bookings yet</h3>
             <p>Start exploring salons and book your first appointment!</p>
             <br>
-            <a href="/home" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(45deg, #667eea, #764ba2); color: white; text-decoration: none; border-radius: 10px; font-weight: 600;">
+            <a href="/customer-home.html" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(45deg, #667eea, #764ba2); color: white; text-decoration: none; border-radius: 10px; font-weight: 600;">
                 <i class="fas fa-search"></i> Browse Salons
             </a>
         </div>
@@ -335,7 +341,7 @@ function renderPayPalPaymentButton(booking) {
                 
                 // Update booking payment status
                 const accessToken = localStorage.getItem('access_token');
-                const response = await fetch(`http://localhost:8000/api/bookings/${booking.id}/update-payment-status/`, {
+                const response = await fetch(`${window.API_BASE_URL}/api/bookings/${booking.id}/update-payment-status/`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -525,7 +531,7 @@ async function fetchCalendarLink(bookingId) {
     try {
         const accessToken = localStorage.getItem('access_token');
         
-        const response = await fetch(`http://localhost:8000/api/bookings/${bookingId}/calendar-link/`, {
+        const response = await fetch(`${window.API_BASE_URL}/api/bookings/${bookingId}/calendar-link/`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }
@@ -556,7 +562,7 @@ async function cancelBooking(bookingId) {
         
         showNotification('Cancelling booking...', 'info');
         
-        const response = await fetch(`http://localhost:8000/api/bookings/${bookingId}/cancel/`, {
+        const response = await fetch(`${window.API_BASE_URL}/api/bookings/${bookingId}/cancel/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -599,7 +605,7 @@ async function processStripePayment() {
         const accessToken = localStorage.getItem('access_token');
         
         // Create Stripe checkout session
-        const response = await fetch(`http://localhost:8000/api/bookings/${bookingId}/stripe/create-checkout/`, {
+        const response = await fetch(`${window.API_BASE_URL}/api/bookings/${bookingId}/stripe/create-checkout/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -695,7 +701,7 @@ async function handleStripePaymentReturn() {
         try {
             const accessToken = localStorage.getItem('access_token');
             
-            const response = await fetch(`http://localhost:8000/api/bookings/${bookingId}/stripe/verify/`, {
+            const response = await fetch(`${window.API_BASE_URL}/api/bookings/${bookingId}/stripe/verify/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

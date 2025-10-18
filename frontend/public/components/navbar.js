@@ -383,11 +383,11 @@ function highlightActivePage() {
     const navLinks = document.querySelectorAll('.nav-link');
     
     navLinks.forEach(link => {
-        const href = link.getAttribute('onclick');
-        if (href) {
-            if (currentPath.includes('/home') && href.includes('/home')) {
+        const onclick = link.getAttribute('onclick');
+        if (onclick) {
+            if ((currentPath.includes('customer-home') || currentPath.includes('/home')) && onclick.includes('customer-home')) {
                 link.classList.add('active');
-            } else if (currentPath.includes('/my-bookings') && href.includes('/my-bookings')) {
+            } else if (currentPath.includes('my-bookings') && onclick.includes('my-bookings')) {
                 link.classList.add('active');
             }
         }

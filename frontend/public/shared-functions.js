@@ -12,7 +12,7 @@ function handleSalonAction() {
     
     if (userData.user_type === 'salon_owner') {
         // Already a salon owner, redirect to dashboard
-        window.location.href = '/salon/dashboard';
+        window.location.href = '/salon-owner-dashboard.html';
     } else {
         // Customer wants to apply, check if modal exists
         const modal = document.getElementById('salonApplicationModal');
@@ -20,8 +20,8 @@ function handleSalonAction() {
             // Modal exists on this page, show it
             showSalonApplicationModal();
         } else {
-            // Modal doesn't exist, redirect to home page with hash
-            window.location.href = '/home#apply-salon';
+            // Modal doesn't exist, redirect to customer home page with hash
+            window.location.href = '/customer-home.html#apply-salon';
         }
     }
 }
@@ -118,12 +118,20 @@ function showNotification(message, type = 'info') {
 }
 
 // Check if user is logged in
-function checkAuth() {
+function checkAuth(options = {}) {
+    const { graceMs = 700, strictRedirect = true } = options;
     const userData = JSON.parse(localStorage.getItem('user_data'));
     const accessToken = localStorage.getItem('access_token');
     
     if (!userData || !accessToken) {
-        window.location.href = '/';
+        // Gracefully wait a bit (for just-redirected logins) before deciding
+        setTimeout(() => {
+            const retryUser = JSON.parse(localStorage.getItem('user_data'));
+            const retryToken = localStorage.getItem('access_token');
+            if ((!retryUser || !retryToken) && strictRedirect) {
+                window.location.href = '/';
+            }
+        }, graceMs);
         return false;
     }
     return true;
