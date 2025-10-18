@@ -201,7 +201,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = False  # Set to True only for development
+CORS_ALLOW_ALL_ORIGINS = True  # Temporarily enabled for testing
 
 # JWT Settings
 from datetime import timedelta
