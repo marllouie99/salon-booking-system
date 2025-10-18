@@ -585,7 +585,7 @@ if (salonApplicationForm) {
         }
         
         // Submit to backend
-        const response = await fetch('http://localhost:8000/api/salons/apply/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/salons/apply/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -623,7 +623,7 @@ function initializeSearch() {
 // Load available cities for filter dropdown
 async function loadAvailableCities() {
     try {
-        const response = await fetch('http://localhost:8000/api/salons/filter/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/salons/filter/`, {
             method: 'GET'
         });
         
@@ -675,7 +675,7 @@ async function performSearch() {
     try {
         showNotification('Searching salons...', 'info');
         
-        const response = await fetch(`http://localhost:8000/api/salons/search/?q=${encodeURIComponent(query)}`, {
+        const response = await fetch(`${window.API_BASE_URL}/api/salons/search/?q=${encodeURIComponent(query)}`, {
             method: 'GET'
         });
         
@@ -726,7 +726,7 @@ async function applyFilters() {
     try {
         showNotification('Applying filters...', 'info');
         
-        const response = await fetch(`http://localhost:8000/api/salons/filter/?${params.toString()}`, {
+        const response = await fetch(`${window.API_BASE_URL}/api/salons/filter/?${params.toString()}`, {
             method: 'GET'
         });
         
