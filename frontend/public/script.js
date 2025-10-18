@@ -161,9 +161,6 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
                 localStorage.setItem('user_data', JSON.stringify(data.user));
                 console.log('✅ Tokens saved to localStorage');
                 
-                // Show success notification
-                showNotification('Login successful! Redirecting...', 'success');
-                
                 // Determine redirect URL
                 const base = window.location.origin;
                 let redirectUrl;
@@ -178,18 +175,48 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
                 
                 console.log('🚀 Redirecting to:', redirectUrl);
                 
-                // Close modal and redirect immediately
-                closeModal('loginModal');
+                // Method 1: Immediate redirect (no delay)
+                try {
+                    window.location.href = redirectUrl;
+                } catch (e) {
+                    console.error('Method 1 failed:', e);
+                }
                 
-                // Force immediate redirect with replace to avoid back button issues
+                // Method 2: Backup with replace after tiny delay
                 setTimeout(() => {
-                    console.log('⏰ Executing redirect now...');
-                    window.location.replace(redirectUrl);
-                }, 800);
+                    try {
+                        console.log('⏰ Backup redirect executing...');
+                        window.location.replace(redirectUrl);
+                    } catch (e) {
+                        console.error('Method 2 failed:', e);
+                    }
+                }, 100);
+                
+                // Method 3: Show manual redirect button as absolute fallback
+                setTimeout(() => {
+                    if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+                        console.warn('⚠️ Auto-redirect failed, showing manual button');
+                        const loginModal = document.getElementById('loginModal');
+                        if (loginModal) {
+                            loginModal.innerHTML = `
+                                <div class="modal-content" style="text-align: center; padding: 3rem;">
+                                    <i class="fas fa-check-circle" style="font-size: 4rem; color: #28a745; margin-bottom: 1rem;"></i>
+                                    <h2>Login Successful!</h2>
+                                    <p style="margin: 1rem 0 2rem 0;">Click below to continue to your dashboard</p>
+                                    <a href="${redirectUrl}" class="btn btn-primary btn-large" style="text-decoration: none; display: inline-block;">
+                                        Go to Home Page
+                                    </a>
+                                </div>
+                            `;
+                        }
+                    }
+                }, 2000);
                 
             } catch (error) {
                 console.error('❌ Error during login redirect:', error);
-                showNotification('Login successful but redirect failed. Please refresh the page.', 'error');
+                alert('Login successful! Please click OK to go to your dashboard.');
+                const redirectUrl = window.location.origin + '/customer-home.html';
+                window.location.href = redirectUrl;
             }
         } else {
             // Check if email is not verified
