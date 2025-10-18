@@ -235,16 +235,29 @@ SIMPLE_JWT = {
 AUTH_USER_MODEL = 'accounts.User'
 
 # Email Configuration
-# Use SMTP backend for production email sending
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For testing only
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
-EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@salonbook.com')
-EMAIL_TIMEOUT = 10  # 10 second timeout to prevent worker timeout
+# Use Brevo (formerly Sendinblue) for reliable email delivery
+BREVO_API_KEY = config('BREVO_API_KEY', default='')
+
+if BREVO_API_KEY:
+    # Brevo SMTP configuration
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp-relay.brevo.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='marllouie4@gmail.com')
+    EMAIL_HOST_PASSWORD = BREVO_API_KEY  # Brevo uses API key as password
+    DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='marllouie4@gmail.com')
+    EMAIL_TIMEOUT = 10
+else:
+    # Fallback to Gmail (for local development)
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+    EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+    EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+    EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+    EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+    DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='marllouie4@gmail.com')
+    EMAIL_TIMEOUT = 10
 
 # Google OAuth Configuration
 GOOGLE_OAUTH_CLIENT_ID = config('GOOGLE_OAUTH_CLIENT_ID', default='')
