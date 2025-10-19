@@ -1,3 +1,9 @@
+// Ensure API_BASE_URL is defined (fallback if config.js hasn't loaded yet)
+if (typeof window.API_BASE_URL === 'undefined') {
+    window.API_BASE_URL = 'https://web-production-e6265.up.railway.app';
+    console.warn('⚠️ API_BASE_URL was undefined in booking.js, using fallback:', window.API_BASE_URL);
+}
+
 // Booking state
 let bookingState = {
     currentStep: 1,
@@ -73,7 +79,7 @@ function resetBookingForm() {
 async function loadSalonServices(salonId) {
     try {
         // Get services for specific salon (public endpoint, no auth needed)
-        const response = await fetch(`http://localhost:8000/api/salons/${salonId}/services/`);
+        const response = await fetch(`${window.API_BASE_URL}/api/salons/${salonId}/services/`);
         
         if (response.ok) {
             const services = await response.json();
@@ -379,7 +385,7 @@ async function loadAvailableTimeSlots() {
         container.innerHTML = '<div class="loading">Loading available times...</div>';
         
         const response = await fetch(
-            `http://localhost:8000/api/bookings/available-slots/${bookingState.salonId}/?date=${bookingState.selectedDate}`
+            `${window.API_BASE_URL}/api/bookings/available-slots/${bookingState.salonId}/?date=${bookingState.selectedDate}`
         );
         
         if (response.ok) {
@@ -483,7 +489,7 @@ async function createBookingWithoutPayment(paymentMethod = 'pay_later') {
     
     const accessToken = localStorage.getItem('access_token');
     
-    const response = await fetch('http://localhost:8000/api/bookings/create/', {
+    const response = await fetch(`${window.API_BASE_URL}/api/bookings/create/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -568,7 +574,7 @@ function renderPayPalButton() {
                 console.log('Updating payment status for booking:', bookingState.bookingId);
                 console.log('PayPal Order ID:', order.id);
                 
-                const updateResponse = await fetch(`http://localhost:8000/api/bookings/${bookingState.bookingId}/update-payment-status/`, {
+                const updateResponse = await fetch(`${window.API_BASE_URL}/api/bookings/${bookingState.bookingId}/update-payment-status/`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -645,7 +651,7 @@ async function payWithCreditCard() {
         if (result.success && result.bookingId) {
             // Create Stripe checkout session
             const accessToken = localStorage.getItem('access_token');
-            const response = await fetch(`http://localhost:8000/api/bookings/${result.bookingId}/stripe/create-checkout/`, {
+            const response = await fetch(`${window.API_BASE_URL}/api/bookings/${result.bookingId}/stripe/create-checkout/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -710,7 +716,7 @@ async function createBookingWithStripe() {
         payment_method: 'stripe'
     };
     
-    const response = await fetch('http://localhost:8000/api/bookings/create/', {
+    const response = await fetch(`${window.API_BASE_URL}/api/bookings/create/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
