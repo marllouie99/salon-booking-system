@@ -177,12 +177,13 @@ CLOUDINARY_STORAGE = {
     'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
     'API_KEY': config('CLOUDINARY_API_KEY', default=''),
     'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
+    'PREFIX': 'salon-booking',  # Folder prefix in Cloudinary
 }
 
 # Use Cloudinary for media files in production, local filesystem in development
 if not DEBUG:
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    MEDIA_URL = '/media/'  # Cloudinary will handle the actual URLs
+    # Cloudinary handles URLs, no MEDIA_URL needed
 else:
     # Local development - use filesystem
     MEDIA_URL = '/media/'
