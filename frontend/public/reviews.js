@@ -7,7 +7,8 @@ if (typeof window.API_BASE_URL === 'undefined') {
     console.warn('⚠️ API_BASE_URL was undefined in reviews.js, using fallback:', window.API_BASE_URL);
 }
 
-const API_BASE_URL = window.API_BASE_URL;
+// Use the global window.API_BASE_URL defined in /config.js directly to avoid
+// redeclaration conflicts when scripts are bundled on the same page.
 
 // ============================================
 // JWT TOKEN REFRESH FUNCTIONS (from chat.js pattern)

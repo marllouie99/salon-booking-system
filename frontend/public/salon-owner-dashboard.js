@@ -81,6 +81,20 @@ document.addEventListener('DOMContentLoaded', function() {
     loadTransactions(); // Load transactions for charts
 });
 
+// Ensure HTTPS for media URLs (avoid mixed content warnings on HTTPS pages)
+function ensureHttps(url) {
+    try {
+        const u = new URL(url);
+        if (u.protocol === 'http:') {
+            u.protocol = 'https:';
+            return u.toString();
+        }
+        return url;
+    } catch (e) {
+        return url ? url.replace(/^http:/, 'https:') : url;
+    }
+}
+
 // Tab switching for dashboard
 function switchDashboardTab(tabName) {
     // Remove active class from all tabs and content
@@ -220,7 +234,7 @@ function displaySalonInfo() {
             console.log('Setting cover from cover_image_url:', salonData.cover_image_url);
             // Add cache-busting timestamp to force reload after upload
             const cacheBuster = `?t=${Date.now()}`;
-            coverEl.style.backgroundImage = `url('${salonData.cover_image_url}${cacheBuster}')`;
+            coverEl.style.backgroundImage = `url('${ensureHttps(salonData.cover_image_url)}${cacheBuster}')`;
             coverEl.style.backgroundSize = 'cover';
             coverEl.style.backgroundPosition = 'center';
         } else if (salonData.cover_image) {
@@ -229,7 +243,7 @@ function displaySalonInfo() {
                 ? salonData.cover_image 
                 : `${window.API_BASE_URL}${salonData.cover_image}`;
             const cacheBuster = `?t=${Date.now()}`;
-            coverEl.style.backgroundImage = `url('${coverUrl}${cacheBuster}')`;
+            coverEl.style.backgroundImage = `url('${ensureHttps(coverUrl)}${cacheBuster}')`;
             coverEl.style.backgroundSize = 'cover';
             coverEl.style.backgroundPosition = 'center';
         } else {
@@ -241,18 +255,24 @@ function displaySalonInfo() {
     // Display logo with cache-busting and error handling
     const logoEl = document.getElementById('salonLogo');
     if (logoEl) {
+        const setLogoImg = (src) => {
+            const cacheBuster = `?t=${Date.now()}`;
+            logoEl.innerHTML = '';
+            const img = document.createElement('img');
+            img.alt = `${salonData.name} Logo`;
+            img.onerror = () => { logoEl.innerHTML = '<i class="fas fa-store"></i>'; };
+            img.src = ensureHttps(src) + cacheBuster;
+            logoEl.appendChild(img);
+        };
         if (salonData.logo_url) {
             console.log('Setting logo from logo_url:', salonData.logo_url);
-            // Add cache-busting timestamp to force reload after upload
-            const cacheBuster = `?t=${Date.now()}`;
-            logoEl.innerHTML = `<img src="${salonData.logo_url}${cacheBuster}" alt="${salonData.name} Logo" onerror="this.parentElement.innerHTML='<i class=\\'fas fa-store\\'></i>';">`;
+            setLogoImg(salonData.logo_url);
         } else if (salonData.logo) {
             console.log('Setting logo from logo:', salonData.logo);
             const logoUrl = salonData.logo.startsWith('http') 
                 ? salonData.logo 
                 : `${window.API_BASE_URL}${salonData.logo}`;
-            const cacheBuster = `?t=${Date.now()}`;
-            logoEl.innerHTML = `<img src="${logoUrl}${cacheBuster}" alt="${salonData.name} Logo" onerror="this.parentElement.innerHTML='<i class=\\'fas fa-store\\'></i>';">`;
+            setLogoImg(logoUrl);
         } else {
             console.log('No logo found, using default icon');
             // Default icon if no logo
