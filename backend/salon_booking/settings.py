@@ -27,10 +27,15 @@ if RAILWAY_STATIC_URL:
 # CSRF Trusted Origins for Railway
 CSRF_TRUSTED_ORIGINS = [
     'https://web-production-e6265.up.railway.app',
-    'https://resplendent-swan-7ddbe1.netlify.app',
+    'https://resplendent-swan-7ddbe1.netlify.app',  # Old Netlify (if still used)
     'http://localhost:8000',
     'http://127.0.0.1:8000',
 ]
+
+# Add Vercel frontend URL to CSRF trusted origins if set
+FRONTEND_URL_CONFIG = config('FRONTEND_URL', default='http://localhost:3000')
+if FRONTEND_URL_CONFIG and FRONTEND_URL_CONFIG not in CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.append(FRONTEND_URL_CONFIG)
 
 # Frontend URL for redirects (payment success, email links, etc.)
 FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:3000')
