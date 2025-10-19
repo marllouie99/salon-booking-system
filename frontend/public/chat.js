@@ -2,6 +2,12 @@
  * Chat System JavaScript - Real-time Customer-Salon Communication
  */
 
+// Ensure API_BASE_URL is defined (fallback if config.js hasn't loaded yet)
+if (typeof window.API_BASE_URL === 'undefined') {
+    window.API_BASE_URL = 'https://web-production-e6265.up.railway.app';
+    console.warn('⚠️ API_BASE_URL was undefined in chat.js, using fallback:', window.API_BASE_URL);
+}
+
 // Refresh access token if needed
 async function refreshAccessToken() {
     const refreshToken = localStorage.getItem('refresh_token');
@@ -11,7 +17,7 @@ async function refreshAccessToken() {
     }
     
     try {
-        const response = await fetch('http://localhost:8000/api/token/refresh/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/token/refresh/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -366,7 +372,7 @@ class ChatManager {
     
     async loadUserChats() {
         try {
-            const response = await authenticatedFetch('http://localhost:8000/api/bookings/chats/');
+            const response = await authenticatedFetch(`${window.API_BASE_URL}/api/bookings/chats/');
             const data = await response.json();
             
             if (response.ok) {
@@ -456,7 +462,7 @@ class ChatManager {
         this.showLoading();
         
         try {
-            const apiUrl = `http://localhost:8000/api/bookings/chat/${salonId}/`;
+            const apiUrl = `${window.API_BASE_URL}/api/bookings/chat/${salonId}/`;
             console.log('Fetching messages from:', apiUrl);
             
             const response = await authenticatedFetch(apiUrl, {
@@ -487,7 +493,7 @@ class ChatManager {
     async startNewChat(salonId, salonName) {
         // First, check if we already have a chat with this salon
         try {
-            const response = await authenticatedFetch('http://localhost:8000/api/bookings/chats/');
+            const response = await authenticatedFetch(`${window.API_BASE_URL}/api/bookings/chats/');
             
             if (response.ok) {
                 const data = await response.json();
@@ -579,7 +585,7 @@ class ChatManager {
             const imageUrl = message.image || message.image_url;
             
             if ((message.message_type === 'image' || message.message_type === 'gif' || message.message_type === 'sticker') && imageUrl) {
-                const fullImageUrl = imageUrl.startsWith('http') ? imageUrl : `http://localhost:8000${imageUrl}`;
+                const fullImageUrl = imageUrl.startsWith('http') ? imageUrl : `${window.API_BASE_URL}${imageUrl}`;
                 const cssClass = message.message_type === 'sticker' ? 'chat-sticker' : 'chat-image';
                 contentHTML = `<img src="${fullImageUrl}" alt="${message.message_type}" class="${cssClass}" onclick="window.open('${fullImageUrl}', '_blank')">`;
             } else if ((message.message_type === 'gif' || message.message_type === 'sticker') && message.content && message.content.startsWith('http')) {
@@ -596,7 +602,7 @@ class ChatManager {
                 // Show salon's avatar in customer view
                 hasAvatar = true;
                 if (message.sender_profile_picture) {
-                    const profileUrl = message.sender_profile_picture.startsWith('http') ? message.sender_profile_picture : `http://localhost:8000${message.sender_profile_picture}`;
+                    const profileUrl = message.sender_profile_picture.startsWith('http') ? message.sender_profile_picture : `${window.API_BASE_URL}${message.sender_profile_picture}`;
                     profilePicHTML = `<img src="${profileUrl}" alt="${message.sender_name}" class="message-avatar">`;
                 } else {
                     const initial = message.sender_name ? message.sender_name.charAt(0).toUpperCase() : 'S';
@@ -666,7 +672,7 @@ class ChatManager {
         this.inputField.value = '';
         this.autoResize();
         try {
-            const apiUrl = `http://localhost:8000/api/bookings/chat/${this.currentSalonId}/send/`;
+            const apiUrl = `${window.API_BASE_URL}/api/bookings/chat/${this.currentSalonId}/send/`;
             console.log('API URL:', apiUrl);
             
             const response = await authenticatedFetch(apiUrl, {
@@ -761,7 +767,7 @@ class ChatManager {
         if (!this.currentSalonId) return;
         
         try {
-            const response = await authenticatedFetch(`http://localhost:8000/api/bookings/chat/${this.currentSalonId}/`, {
+            const response = await authenticatedFetch(`${window.API_BASE_URL}/api/bookings/chat/${this.currentSalonId}/`, {
                 method: 'GET'
             });
             
@@ -837,7 +843,7 @@ class ChatManager {
         
         try {
             // Mark messages as read - need to implement proper endpoint or skip
-            // await authenticatedFetch(`http://localhost:8000/api/bookings/messages/mark-read/`, {
+            // await authenticatedFetch(`${window.API_BASE_URL}/api/bookings/messages/mark-read/`, {
             //     method: 'POST'
             // });
         } catch (error) {
@@ -887,8 +893,8 @@ class ChatManager {
         try {
             // Choose endpoint based on user type
             const endpoint = (this.userType === 'salon' && this.currentCustomerId) 
-                ? `http://localhost:8000/api/bookings/salon/chat/${this.currentCustomerId}/send/`
-                : `http://localhost:8000/api/bookings/chat/${this.currentSalonId}/send/`;
+                ? `${window.API_BASE_URL}/api/bookings/salon/chat/${this.currentCustomerId}/send/`
+                : `${window.API_BASE_URL}/api/bookings/chat/${this.currentSalonId}/send/`;
                 
             const response = await authenticatedFetch(endpoint, {
                 method: 'POST',
@@ -934,7 +940,7 @@ class ChatManager {
             this.messagesContainer.innerHTML = '';
         }
         
-        const fullImageUrl = imageUrl.startsWith('http') ? imageUrl : `http://localhost:8000${imageUrl}`;
+        const fullImageUrl = imageUrl.startsWith('http') ? imageUrl : `${window.API_BASE_URL}${imageUrl}`;
         
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${senderType}`;
@@ -1019,8 +1025,8 @@ class ChatManager {
         try {
             // Choose endpoint based on user type
             const endpoint = (this.userType === 'salon' && this.currentCustomerId) 
-                ? `http://localhost:8000/api/bookings/salon/chat/${this.currentCustomerId}/send/`
-                : `http://localhost:8000/api/bookings/chat/${this.currentSalonId}/send/`;
+                ? `${window.API_BASE_URL}/api/bookings/salon/chat/${this.currentCustomerId}/send/`
+                : `${window.API_BASE_URL}/api/bookings/chat/${this.currentSalonId}/send/`;
                 
             const response = await authenticatedFetch(endpoint, {
                 method: 'POST',
@@ -1140,8 +1146,8 @@ class ChatManager {
         try {
             // Choose endpoint based on user type
             const endpoint = (this.userType === 'salon' && this.currentCustomerId) 
-                ? `http://localhost:8000/api/bookings/salon/chat/${this.currentCustomerId}/send/`
-                : `http://localhost:8000/api/bookings/chat/${this.currentSalonId}/send/`;
+                ? `${window.API_BASE_URL}/api/bookings/salon/chat/${this.currentCustomerId}/send/`
+                : `${window.API_BASE_URL}/api/bookings/chat/${this.currentSalonId}/send/`;
                 
             const response = await authenticatedFetch(endpoint, {
                 method: 'POST',
@@ -1358,7 +1364,7 @@ class SalonChatManager {
     async loadUserChats(salonId = null) {
         try {
             // Build URL with salon_id query param if provided
-            let url = 'http://localhost:8000/api/bookings/salon/chats/';
+            let url = `${window.API_BASE_URL}/api/bookings/salon/chats/';
             if (salonId) {
                 url += `?salon_id=${salonId}`;
             }
@@ -1471,7 +1477,7 @@ class SalonChatManager {
         
         try {
             // Get chat messages - fetch with current salon ID
-            let url = `http://localhost:8000/api/bookings/salon/chats/`;
+            let url = `${window.API_BASE_URL}/api/bookings/salon/chats/`;
             if (this.currentSalonId) {
                 url += `?salon_id=${this.currentSalonId}`;
             }
@@ -1530,7 +1536,7 @@ class SalonChatManager {
             const imageUrl = message.image || message.image_url;
             
             if ((message.message_type === 'image' || message.message_type === 'gif' || message.message_type === 'sticker') && imageUrl) {
-                const fullImageUrl = imageUrl.startsWith('http') ? imageUrl : `http://localhost:8000${imageUrl}`;
+                const fullImageUrl = imageUrl.startsWith('http') ? imageUrl : `${window.API_BASE_URL}${imageUrl}`;
                 const cssClass = message.message_type === 'sticker' ? 'chat-sticker' : 'chat-image';
                 contentHTML = `<img src="${fullImageUrl}" alt="${message.message_type}" class="${cssClass}" onclick="window.open('${fullImageUrl}', '_blank')">`;
             } else if ((message.message_type === 'gif' || message.message_type === 'sticker') && message.content && message.content.startsWith('http')) {
@@ -1547,7 +1553,7 @@ class SalonChatManager {
                 // Show customer's avatar in salon owner view
                 hasAvatar = true;
                 if (message.sender_profile_picture) {
-                    const profileUrl = message.sender_profile_picture.startsWith('http') ? message.sender_profile_picture : `http://localhost:8000${message.sender_profile_picture}`;
+                    const profileUrl = message.sender_profile_picture.startsWith('http') ? message.sender_profile_picture : `${window.API_BASE_URL}${message.sender_profile_picture}`;
                     profilePicHTML = `<img src="${profileUrl}" alt="${message.sender_name}" class="message-avatar">`;
                 } else {
                     const initial = message.sender_name ? message.sender_name.charAt(0).toUpperCase() : 'C';
@@ -1599,7 +1605,7 @@ class SalonChatManager {
         }
         
         try {
-            const response = await authenticatedFetch(`http://localhost:8000/api/bookings/salon/chat/${this.currentCustomerId}/send/`, {
+            const response = await authenticatedFetch(`${window.API_BASE_URL}/api/bookings/salon/chat/${this.currentCustomerId}/send/`, {
                 method: 'POST',
                 body: JSON.stringify({
                     content: content,
@@ -1699,7 +1705,7 @@ class SalonChatManager {
         this.addMessageToUI('salon', '📤 Uploading image...', new Date().toISOString());
         
         try {
-            const response = await authenticatedFetch(`http://localhost:8000/api/bookings/salon/chat/${this.currentChatId}/send/`, {
+            const response = await authenticatedFetch(`${window.API_BASE_URL}/api/bookings/salon/chat/${this.currentChatId}/send/`, {
                 method: 'POST',
                 body: formData,
                 isFormData: true
@@ -1739,7 +1745,7 @@ class SalonChatManager {
             this.messagesContainer.innerHTML = '';
         }
         
-        const fullImageUrl = imageUrl.startsWith('http') ? imageUrl : `http://localhost:8000${imageUrl}`;
+        const fullImageUrl = imageUrl.startsWith('http') ? imageUrl : `${window.API_BASE_URL}${imageUrl}`;
         
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${senderType}`;
