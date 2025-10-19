@@ -403,7 +403,7 @@ class ChatManager {
         }
         
         const chatListHTML = chats.map(chat => `
-            <div class="chat-item" onclick="window.activeChatManager.openChat(${chat.id}, ${chat.salon.id}, ${JSON.stringify(chat.salon.name)})">
+            <div class="chat-item" onclick="window.activeChatManager.openChat(${chat.id}, ${chat.salon.id}, '${chat.salon.name.replace(/'/g, "\\'")}')">
                 <div class="chat-item-info">
                     <div class="chat-item-name">${chat.salon.name}</div>
                     <div class="chat-item-last-message">
@@ -1420,7 +1420,7 @@ class SalonChatManager {
         }
         
         const chatListHTML = chats.map(chat => `
-            <div class="chat-item" onclick="window.activeChatManager.openChat(${chat.id}, ${chat.salon.id}, ${JSON.stringify(chat.salon.name)})">
+            <div class="chat-item" onclick="window.activeChatManager.openChat(${chat.id}, ${chat.salon.id}, '${chat.salon.name.replace(/'/g, "\\'")}')">
                 <div class="chat-item-info">
                     <div class="chat-item-name">${chat.salon.name}</div>
                     <div class="chat-item-last-message">
