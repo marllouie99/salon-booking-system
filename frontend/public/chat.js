@@ -1420,22 +1420,21 @@ class SalonChatManager {
                 ${salonSelectorHTML}
                 <div class="chat-empty">
                     <i class="fas fa-comments"></i>
-                    <h3>No Customer Chats</h3>
-                    <p>Customers will appear here when they message you</p>
+                    <h3>No Chats Yet</h3>
+                    <p>Waiting for customers to start conversations</p>
                 </div>
             `;
-            document.getElementById('chatTitle').textContent = `Customer Chats - ${this.currentSalonName}`;
             document.getElementById('chatInput').style.display = 'none';
             return;
         }
         
         const chatListHTML = chats.map(chat => `
-            <div class="chat-item" data-chat-id="${chat.id}" data-salon-id="${chat.salon.id}" data-salon-name="${chat.salon.name}">
+            <div class="chat-item" data-chat-id="${chat.id}" data-customer-id="${chat.customer.id}" data-customer-name="${chat.customer.first_name} ${chat.customer.last_name}">
                 <div class="chat-item-info">
-                    <div class="chat-item-name">${chat.salon.name}</div>
+                    <div class="chat-item-name">${chat.customer.first_name} ${chat.customer.last_name}</div>
                     <div class="chat-item-last-message">
                         ${chat.last_message ? 
-                            (chat.last_message.sender_type === 'customer' ? 'You: ' : '') + 
+                            (chat.last_message.sender_type === 'salon' ? 'You: ' : '') + 
                             this.truncateText(chat.last_message.content, 30) 
                             : 'No messages yet'}
                     </div>
@@ -1459,10 +1458,9 @@ class SalonChatManager {
         // Add click event listeners to chat items
         document.querySelectorAll('.chat-item').forEach(item => {
             item.addEventListener('click', () => {
-                const chatId = parseInt(item.dataset.chatId);
-                const salonId = parseInt(item.dataset.salonId);
-                const salonName = item.dataset.salonName;
-                window.activeChatManager.openChat(chatId, salonId, salonName);
+                const customerId = parseInt(item.dataset.customerId);
+                const customerName = item.dataset.customerName;
+                this.openSalonChat(customerId, customerName);
             });
         });
         
