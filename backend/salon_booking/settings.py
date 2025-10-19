@@ -198,7 +198,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5500",
     "http://127.0.0.1:5500",
     "https://resplendent-swan-7ddbe1.netlify.app",  # Old Netlify frontend
-    "https://tangerine-jalebi-f488be.netlify.app",  # Current Netlify frontend
+    "https://tangerine-jalebi-f488be.netlify.app",  # Old Netlify frontend
+    "https://salon-booking-system-31q0wa0a8-ramdar143s-projects.vercel.app",  # Vercel frontend
 ]
 
 CORS_ALLOW_CREDENTIALS = True
