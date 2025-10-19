@@ -1,5 +1,11 @@
 // Admin Users Management JavaScript
 
+// Ensure API_BASE_URL is defined (fallback if config.js hasn't loaded yet)
+if (typeof window.API_BASE_URL === 'undefined') {
+    window.API_BASE_URL = 'https://web-production-e6265.up.railway.app';
+    console.warn('⚠️ API_BASE_URL was undefined in admin-users.js, using fallback:', window.API_BASE_URL);
+}
+
 let allUsers = [];
 let filteredUsers = [];
 let currentPage = 1;
@@ -61,7 +67,7 @@ async function loadAllUsers() {
         const token = localStorage.getItem('access_token');
         console.log('Token:', token ? 'Found' : 'Not found');
         
-        const response = await fetch('http://localhost:8000/api/accounts/users/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/users/`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -380,7 +386,7 @@ async function deleteUser(userId) {
         const token = localStorage.getItem('access_token');
         
         // Try API call first
-        const response = await fetch(`http://localhost:8000/api/accounts/users/${userId}/`, {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/users/${userId}/`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -425,7 +431,7 @@ async function toggleUserStatus(userId) {
     try {
         const token = localStorage.getItem('access_token');
         
-        const response = await fetch(`http://localhost:8000/api/accounts/users/${userId}/toggle-status/`, {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/users/${userId}/toggle-status/`, {
             method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -508,7 +514,7 @@ document.getElementById('addUserForm').addEventListener('submit', async function
     try {
         const token = localStorage.getItem('access_token');
         
-        const response = await fetch('http://localhost:8000/api/accounts/register/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/register/`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
