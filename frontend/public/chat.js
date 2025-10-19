@@ -372,7 +372,7 @@ class ChatManager {
     
     async loadUserChats() {
         try {
-            const response = await authenticatedFetch(`${window.API_BASE_URL}/api/bookings/chats/');
+            const response = await authenticatedFetch(`${window.API_BASE_URL}/api/bookings/chats/`);
             const data = await response.json();
             
             if (response.ok) {
@@ -503,7 +503,7 @@ class ChatManager {
     async startNewChat(salonId, salonName) {
         // First, check if we already have a chat with this salon
         try {
-            const response = await authenticatedFetch(`${window.API_BASE_URL}/api/bookings/chats/');
+            const response = await authenticatedFetch(`${window.API_BASE_URL}/api/bookings/chats/`);
             
             if (response.ok) {
                 const data = await response.json();

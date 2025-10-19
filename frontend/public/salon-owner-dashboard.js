@@ -156,7 +156,7 @@ function loadUserData() {
 
 async function loadSalonData() {
     try {
-        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/');
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/`);
         
         if (response.ok) {
             const allSalons = await response.json();
@@ -321,7 +321,7 @@ function updateStats() {
 
 async function loadServices() {
     try {
-        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/services/');
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/services/`);
         
         if (response.ok) {
             servicesData = await response.json();
@@ -566,7 +566,7 @@ function deleteService(serviceId, serviceName) {
 // Load bookings
 async function loadBookings() {
     try {
-        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/bookings/salon-bookings/');
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/bookings/salon-bookings/`);
         
         if (response.ok) {
             allBookings = await response.json();
@@ -1034,7 +1034,7 @@ let currentFilter = 'all';
 
 async function loadTransactions() {
     try {
-        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/bookings/salon-transactions/');
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/bookings/salon-transactions/`);
         
         const data = await response.json();
         console.log('Transactions API response:', data);
