@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt',
+    'cloudinary_storage',
+    'cloudinary',
     
     # Local apps
     'accounts',
@@ -170,12 +172,21 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # WhiteNoise configuration for serving static files in production
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Important: MEDIA_URL should start with a leading slash so FileField.url yields
-# paths like "/media/..." instead of "media/...". Without the leading slash,
-# the frontend concatenation `${API_BASE_URL}${path}` would miss a separator
-# (e.g., https://api.example.commedia/...), causing images not to render.
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Cloudinary Configuration for Media Storage
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
+    'API_KEY': config('CLOUDINARY_API_KEY', default=''),
+    'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
+}
+
+# Use Cloudinary for media files in production, local filesystem in development
+if not DEBUG:
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    MEDIA_URL = '/media/'  # Cloudinary will handle the actual URLs
+else:
+    # Local development - use filesystem
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
 
 # Ensure correct HTTPS scheme behind proxies (e.g., Railway)
 # This helps request.build_absolute_uri() generate https:// URLs
