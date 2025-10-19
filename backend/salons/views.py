@@ -12,8 +12,19 @@ from .models import SalonApplication, Salon, Service, ServiceImage, Review
 from .serializers import ReviewSerializer, ReviewCreateSerializer, SalonResponseSerializer
 from activity_logger import log_user_activity, log_salon_activity
 from notifications.utils import create_application_notification
+import logging
+
+# Import Brevo SDK if available
+try:
+    import sib_api_v3_sdk
+    from sib_api_v3_sdk.rest import ApiException
+    BREVO_SDK_AVAILABLE = True
+except ImportError:
+    BREVO_SDK_AVAILABLE = False
+    logging.warning("Brevo SDK not available. Email will use SMTP fallback.")
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 @api_view(['POST'])
@@ -316,18 +327,69 @@ Please review the application in the admin dashboard.
     
     from_email = settings.DEFAULT_FROM_EMAIL
     # Send to all admin users
-    admin_emails = User.objects.filter(is_staff=True).values_list('email', flat=True)
+    admin_emails = list(User.objects.filter(is_staff=True).values_list('email', flat=True))
+    
+    if not admin_emails:
+        logger.warning("No admin emails found to send application notification")
+        print("⚠️ No admin emails found to send application notification")
+        return False
+    
+    logger.info(f"📧 Attempting to send admin notification to: {admin_emails}")
+    print(f"📧 Attempting to send admin notification to: {admin_emails}")
     
     try:
-        send_mail(
+        # Use Brevo API if available
+        brevo_api_key = getattr(settings, 'BREVO_API_KEY', None)
+        
+        if brevo_api_key and BREVO_SDK_AVAILABLE:
+            try:
+                configuration = sib_api_v3_sdk.Configuration()
+                configuration.api_key['api-key'] = brevo_api_key
+                
+                api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+                
+                to_list = [{"email": email} for email in admin_emails]
+                
+                send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                    to=to_list,
+                    sender={"email": from_email, "name": "Salon Booking System"},
+                    subject=subject,
+                    text_content=message
+                )
+                
+                api_response = api_instance.send_transac_email(send_smtp_email)
+                logger.info(f"✅ Admin notification SENT successfully via Brevo API - Message ID: {api_response.message_id}")
+                print(f"✅ Admin notification SENT successfully via Brevo API")
+                return True
+                
+            except ApiException as e:
+                logger.error(f"❌ Brevo API error: {e}")
+                print(f"❌ Brevo API error: {e}")
+                # Fall through to SMTP fallback
+        
+        # Fallback to SMTP
+        result = send_mail(
             subject=subject,
             message=message,
             from_email=from_email,
-            recipient_list=list(admin_emails),
+            recipient_list=admin_emails,
             fail_silently=False,
         )
+        
+        if result > 0:
+            logger.info(f"✅ Admin notification SENT successfully via SMTP")
+            print(f"✅ Admin notification SENT successfully via SMTP")
+            return True
+        else:
+            logger.warning(f"⚠️ Email may not have been sent")
+            return False
+            
     except Exception as e:
-        print(f"Failed to send admin notification: {e}")
+        logger.error(f"❌ Failed to send admin notification: {e}", exc_info=True)
+        print(f"❌ Failed to send admin notification: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
 
 
 def send_approval_email(application, salon):
@@ -351,7 +413,7 @@ Salon Details:
 - Location: {salon.city}, {salon.state}
 - Services: {', '.join(salon.services)}
 
-Login to your account to get started: http://localhost:3000/login
+Login to your account to get started: https://salon-booking-system3.vercel.app/login
 
 If you have any questions, feel free to contact us.
 
@@ -360,18 +422,76 @@ SalonBook Team
     """
     
     from_email = settings.DEFAULT_FROM_EMAIL
-    recipient_list = [application.user.email, application.business_email]
+    recipient_list = [application.user.email]
+    if application.business_email and application.business_email != application.user.email:
+        recipient_list.append(application.business_email)
+    
+    logger.info(f"📧 Attempting to send approval email to: {recipient_list}")
+    print(f"📧 Attempting to send approval email to: {recipient_list}")
     
     try:
-        send_mail(
+        # Use Brevo API if available (recommended for production)
+        brevo_api_key = getattr(settings, 'BREVO_API_KEY', None)
+        
+        if brevo_api_key and BREVO_SDK_AVAILABLE:
+            logger.info("Using Brevo API for email delivery")
+            print("Using Brevo API for email delivery")
+            
+            try:
+                # Send via Brevo API (HTTP - not blocked by Railway)
+                configuration = sib_api_v3_sdk.Configuration()
+                configuration.api_key['api-key'] = brevo_api_key
+                
+                api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+                
+                # Send to all recipients
+                to_list = [{"email": email, "name": application.user.first_name} for email in recipient_list]
+                
+                send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                    to=to_list,
+                    sender={"email": from_email, "name": "Salon Booking System"},
+                    subject=subject,
+                    text_content=message
+                )
+                
+                api_response = api_instance.send_transac_email(send_smtp_email)
+                logger.info(f"✅ Approval email SENT successfully via Brevo API - Message ID: {api_response.message_id}")
+                print(f"✅ Approval email SENT successfully via Brevo API")
+                print(f"✅ Message ID: {api_response.message_id}")
+                return True
+                
+            except ApiException as e:
+                logger.error(f"❌ Brevo API error: {e}")
+                print(f"❌ Brevo API error: {e}")
+                # Fall through to SMTP fallback
+        
+        # Fallback to Django SMTP
+        logger.info("Using SMTP for email delivery")
+        print("Using SMTP for email delivery")
+        
+        result = send_mail(
             subject=subject,
             message=message,
             from_email=from_email,
             recipient_list=recipient_list,
             fail_silently=False,
         )
+        
+        if result > 0:
+            logger.info(f"✅ Approval email SENT successfully via SMTP to {recipient_list}")
+            print(f"✅ Approval email SENT successfully via SMTP")
+            return True
+        else:
+            logger.warning(f"⚠️ Email may not have been sent (result: {result})")
+            print(f"⚠️ Email may not have been sent (result: {result})")
+            return False
+            
     except Exception as e:
-        print(f"Failed to send approval email: {e}")
+        logger.error(f"❌ Failed to send approval email: {e}", exc_info=True)
+        print(f"❌ Failed to send approval email: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
 
 
 def send_rejection_email(application):
@@ -397,16 +517,62 @@ SalonBook Team
     from_email = settings.DEFAULT_FROM_EMAIL
     recipient_list = [application.user.email]
     
+    logger.info(f"📧 Attempting to send rejection email to: {recipient_list}")
+    print(f"📧 Attempting to send rejection email to: {recipient_list}")
+    
     try:
-        send_mail(
+        # Use Brevo API if available
+        brevo_api_key = getattr(settings, 'BREVO_API_KEY', None)
+        
+        if brevo_api_key and BREVO_SDK_AVAILABLE:
+            try:
+                configuration = sib_api_v3_sdk.Configuration()
+                configuration.api_key['api-key'] = brevo_api_key
+                
+                api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+                
+                to_list = [{"email": email, "name": application.user.first_name} for email in recipient_list]
+                
+                send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                    to=to_list,
+                    sender={"email": from_email, "name": "Salon Booking System"},
+                    subject=subject,
+                    text_content=message
+                )
+                
+                api_response = api_instance.send_transac_email(send_smtp_email)
+                logger.info(f"✅ Rejection email SENT successfully via Brevo API - Message ID: {api_response.message_id}")
+                print(f"✅ Rejection email SENT successfully via Brevo API")
+                return True
+                
+            except ApiException as e:
+                logger.error(f"❌ Brevo API error: {e}")
+                print(f"❌ Brevo API error: {e}")
+                # Fall through to SMTP fallback
+        
+        # Fallback to SMTP
+        result = send_mail(
             subject=subject,
             message=message,
             from_email=from_email,
             recipient_list=recipient_list,
             fail_silently=False,
         )
+        
+        if result > 0:
+            logger.info(f"✅ Rejection email SENT successfully via SMTP")
+            print(f"✅ Rejection email SENT successfully via SMTP")
+            return True
+        else:
+            logger.warning(f"⚠️ Email may not have been sent")
+            return False
+            
     except Exception as e:
-        print(f"Failed to send rejection email: {e}")
+        logger.error(f"❌ Failed to send rejection email: {e}", exc_info=True)
+        print(f"❌ Failed to send rejection email: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
 
 
 @api_view(['GET'])
