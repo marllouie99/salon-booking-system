@@ -1428,10 +1428,14 @@ class SalonChatManager {
             return;
         }
         
-        const chatListHTML = chats.map(chat => `
-            <div class="chat-item" data-chat-id="${chat.id}" data-customer-id="${chat.customer.id}" data-customer-name="${chat.customer.first_name} ${chat.customer.last_name}">
+        const chatListHTML = chats.map(chat => {
+            const customerName = chat.customer.first_name && chat.customer.last_name 
+                ? `${chat.customer.first_name} ${chat.customer.last_name}`
+                : chat.customer.email || 'Customer';
+            return `
+            <div class="chat-item" data-chat-id="${chat.id}" data-customer-id="${chat.customer.id}" data-customer-name="${customerName}">
                 <div class="chat-item-info">
-                    <div class="chat-item-name">${chat.customer.first_name} ${chat.customer.last_name}</div>
+                    <div class="chat-item-name">${customerName}</div>`;
                     <div class="chat-item-last-message">
                         ${chat.last_message ? 
                             (chat.last_message.sender_type === 'salon' ? 'You: ' : '') + 
@@ -1446,7 +1450,8 @@ class SalonChatManager {
                     ${chat.unread_count > 0 ? `<div class="chat-item-unread">${chat.unread_count}</div>` : ''}
                 </div>
             </div>
-        `).join('');
+        `;
+        }).join('');
         
         this.messagesContainer.innerHTML = `
             ${salonSelectorHTML}
