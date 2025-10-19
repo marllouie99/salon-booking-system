@@ -1364,7 +1364,7 @@ class SalonChatManager {
     async loadUserChats(salonId = null) {
         try {
             // Build URL with salon_id query param if provided
-            let url = `${window.API_BASE_URL}/api/bookings/salon/chats/';
+            let url = `${window.API_BASE_URL}/api/bookings/salon/chats/`;
             if (salonId) {
                 url += `?salon_id=${salonId}`;
             }
