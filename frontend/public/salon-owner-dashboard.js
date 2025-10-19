@@ -437,7 +437,7 @@ document.getElementById('editSalonForm').addEventListener('submit', async functi
     
     try {
         showNotification('Saving salon profile...', 'info');
-        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/profile/', {
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/profile/`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -480,7 +480,7 @@ document.getElementById('addServiceForm').addEventListener('submit', async funct
         
         showNotification('Adding service...', 'info');
         
-        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/services/', {
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/services/`, {
             method: 'POST',
             body: formData,
             isFormData: true
@@ -1812,7 +1812,7 @@ function uploadSalonLogo() {
         
         try {
             showNotification('Uploading logo...', 'info');
-            const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/upload-logo/', {
+            const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/upload-logo/`, {
                 method: 'POST',
                 body: formData,
                 isFormData: true
@@ -1853,7 +1853,7 @@ function uploadSalonCover() {
         
         try {
             showNotification('Uploading cover image...', 'info');
-            const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/upload-cover/', {
+            const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/upload-cover/`, {
                 method: 'POST',
                 body: formData,
                 isFormData: true
