@@ -402,10 +402,8 @@ class ChatManager {
             return;
         }
         
-        const chatListHTML = chats.map(chat => {
-            const salonNameEscaped = chat.salon.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-            return `
-            <div class="chat-item" onclick="window.activeChatManager.openChat(${chat.id}, ${chat.salon.id}, '${salonNameEscaped}')">
+        const chatListHTML = chats.map(chat => `
+            <div class="chat-item" onclick="window.activeChatManager.openChat(${chat.id}, ${chat.salon.id}, ${JSON.stringify(chat.salon.name)})">
                 <div class="chat-item-info">
                     <div class="chat-item-name">${chat.salon.name}</div>
                     <div class="chat-item-last-message">
@@ -422,8 +420,7 @@ class ChatManager {
                     ${chat.unread_count > 0 ? `<div class="chat-item-unread">${chat.unread_count}</div>` : ''}
                 </div>
             </div>
-        `;
-        }).join('');
+        `).join('');
         
         this.messagesContainer.innerHTML = `
             <div class="chat-list">
@@ -1423,12 +1420,12 @@ class SalonChatManager {
         }
         
         const chatListHTML = chats.map(chat => `
-            <div class="chat-item" onclick="window.salonChatManager.openSalonChat(${chat.customer.id}, '${chat.customer.name}')">
+            <div class="chat-item" onclick="window.activeChatManager.openChat(${chat.id}, ${chat.salon.id}, ${JSON.stringify(chat.salon.name)})">
                 <div class="chat-item-info">
-                    <div class="chat-item-name">${chat.customer.name}</div>
+                    <div class="chat-item-name">${chat.salon.name}</div>
                     <div class="chat-item-last-message">
                         ${chat.last_message ? 
-                            (chat.last_message.sender_type === 'salon' ? 'You: ' : '') + 
+                            (chat.last_message.sender_type === 'customer' ? 'You: ' : '') + 
                             this.truncateText(chat.last_message.content, 30) 
                             : 'No messages yet'}
                     </div>

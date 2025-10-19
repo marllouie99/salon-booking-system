@@ -280,7 +280,7 @@ function displayFeaturedSalons(salons) {
                         }
                     </div>
                     <div class="salon-actions">
-                        <button class="btn-chat" onclick="event.stopPropagation(); startChatWithSalon(${salon.id}, \`${salon.name}\`)">
+                        <button class="btn-chat" onclick="event.stopPropagation(); startChatWithSalon(${salon.id}, ${JSON.stringify(salon.name)})">
                             <i class="fas fa-comment"></i> Chat
                         </button>
                         <button class="btn-book" onclick="event.stopPropagation(); openBookingModal(${salon.id})">
@@ -871,7 +871,7 @@ function createSalonCard(salon) {
                         <strong>${priceRange}</strong>
                     </div>
                     <div class="salon-actions">
-                        <button class="btn-chat" onclick="event.stopPropagation(); startChatWithSalon(${salon.id}, \`${salon.name}\`)">
+                        <button class="btn-chat" onclick="event.stopPropagation(); startChatWithSalon(${salon.id}, ${JSON.stringify(salon.name)})">
                             <i class="fas fa-comment"></i> Chat
                         </button>
                         <button class="btn-book" onclick="event.stopPropagation(); openBookingModal(${salon.id})">
