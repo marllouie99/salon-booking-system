@@ -881,7 +881,7 @@ function displayServicesFullView() {
                 <button class="btn-icon" onclick="editService(${service.id})" title="Edit">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button class="btn-icon btn-danger" onclick="deleteService(${service.id}, '${service.name.replace(/'/g, "\\'")}')" title="Delete">
+                <button class="btn-icon btn-danger" onclick="deleteService(${service.id}, '${service.name.replace(/'/g, "&#39;")}')" title="Delete">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
