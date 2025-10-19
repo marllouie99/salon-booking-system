@@ -19,8 +19,8 @@ def create_payment(amount, currency='USD', description='Salon Booking'):
             "payment_method": "paypal"
         },
         "redirect_urls": {
-            "return_url": "http://localhost:3000/payment/success",
-            "cancel_url": "http://localhost:3000/payment/cancel"
+            "return_url": f"{settings.FRONTEND_URL}/payment/success",
+            "cancel_url": f"{settings.FRONTEND_URL}/payment/cancel"
         },
         "transactions": [{
             "amount": {

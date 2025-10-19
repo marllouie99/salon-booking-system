@@ -727,7 +727,7 @@ PAYMENT REQUIRED:
 Your booking is confirmed, but payment is still pending.
 Please complete your payment to secure your appointment.
 
-Pay Now: http://localhost:3000/my-bookings
+Pay Now: {settings.FRONTEND_URL}/my-bookings
 Amount: ${booking.price}
 """
         else:
@@ -758,7 +758,7 @@ Best regards,
 SalonBook Team
 
 ================================
-View your booking: http://localhost:3000/my-bookings
+View your booking: {settings.FRONTEND_URL}/my-bookings
         """
     elif booking.status == 'cancelled':
         subject = f'Booking Cancelled - {booking.salon.name}'
@@ -2072,8 +2072,8 @@ def create_stripe_checkout_session(request, booking_id):
                     'quantity': 1,
                 }],
                 mode='payment',
-                success_url=f'http://localhost:3000/my-bookings?payment=success&booking_id={booking.id}&session_id={{CHECKOUT_SESSION_ID}}',
-                cancel_url=f'http://localhost:3000/my-bookings?payment=cancelled&booking_id={booking.id}',
+                success_url=f'{settings.FRONTEND_URL}/my-bookings?payment=success&booking_id={booking.id}&session_id={{CHECKOUT_SESSION_ID}}',
+                cancel_url=f'{settings.FRONTEND_URL}/my-bookings?payment=cancelled&booking_id={booking.id}',
                 client_reference_id=str(booking.id),
                 customer_email=booking.customer_email,
                 metadata={
