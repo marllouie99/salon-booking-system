@@ -199,11 +199,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5500",
     "https://resplendent-swan-7ddbe1.netlify.app",  # Old Netlify frontend
     "https://tangerine-jalebi-f488be.netlify.app",  # Old Netlify frontend
-    "https://salon-booking-system-31q0wa0a8-ramdar143s-projects.vercel.app",  # Old Vercel URL
-    "https://mysalonapp.com",  # Custom domain
-    "https://www.mysalonapp.com",  # WWW subdomain
-    "https://salon-booking-system3-git-main-ramdar143s-projects.vercel.app",  # Vercel git URL
-    "https://salon-booking-system3-ev6px4p7v-ramdar143s-projects.vercel.app",  # Vercel preview URL
+    "https://salon-booking-system3.vercel.app",  # Vercel production URL
 ]
 
 CORS_ALLOW_CREDENTIALS = True
