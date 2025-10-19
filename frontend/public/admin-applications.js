@@ -1,3 +1,9 @@
+// Ensure API_BASE_URL is defined (fallback if config.js hasn't loaded yet)
+if (typeof window.API_BASE_URL === 'undefined') {
+    window.API_BASE_URL = 'https://web-production-e6265.up.railway.app';
+    console.warn('⚠️ API_BASE_URL was undefined in admin-applications.js, using fallback:', window.API_BASE_URL);
+}
+
 let allApplications = [];
 let currentFilter = 'all';
 
@@ -23,7 +29,7 @@ async function loadApplications() {
             return;
         }
         
-        const response = await fetch('http://localhost:8000/api/salons/applications/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/salons/applications/`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }
@@ -353,7 +359,7 @@ async function approveApplication(appId) {
     try {
         const accessToken = localStorage.getItem('access_token');
         
-        const response = await fetch(`http://localhost:8000/api/salons/applications/${appId}/approve/`, {
+        const response = await fetch(`${window.API_BASE_URL}/api/salons/applications/${appId}/approve/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -393,7 +399,7 @@ async function rejectApplication(appId) {
     try {
         const accessToken = localStorage.getItem('access_token');
         
-        const response = await fetch(`http://localhost:8000/api/salons/applications/${appId}/reject/`, {
+        const response = await fetch(`${window.API_BASE_URL}/api/salons/applications/${appId}/reject/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

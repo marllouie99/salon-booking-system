@@ -1,5 +1,11 @@
 // Admin Dashboard JavaScript
 
+// Ensure API_BASE_URL is defined (fallback if config.js hasn't loaded yet)
+if (typeof window.API_BASE_URL === 'undefined') {
+    window.API_BASE_URL = 'https://web-production-e6265.up.railway.app';
+    console.warn('⚠️ API_BASE_URL was undefined in admin-script.js, using fallback:', window.API_BASE_URL);
+}
+
 // Check if user is admin on page load
 document.addEventListener('DOMContentLoaded', function() {
     checkAdminAuth();
@@ -41,7 +47,7 @@ async function loadDashboardData() {
         const token = localStorage.getItem('access_token');
         
         // Load users count
-        const usersResponse = await fetch('http://localhost:8000/api/auth/users/', {
+        const usersResponse = await fetch(`${window.API_BASE_URL}/api/auth/users/`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'

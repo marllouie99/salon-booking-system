@@ -1,3 +1,9 @@
+// Ensure API_BASE_URL is defined (fallback if config.js hasn't loaded yet)
+if (typeof window.API_BASE_URL === 'undefined') {
+    window.API_BASE_URL = 'https://web-production-e6265.up.railway.app';
+    console.warn('⚠️ API_BASE_URL was undefined in admin-salons.js, using fallback:', window.API_BASE_URL);
+}
+
 let allSalons = [];
 
 // Load salons on page load
@@ -22,7 +28,7 @@ async function loadSalons() {
             return;
         }
         
-        const response = await fetch('http://localhost:8000/api/salons/', {
+        const response = await fetch(`${window.API_BASE_URL}/api/salons/`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }

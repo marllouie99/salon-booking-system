@@ -1,7 +1,13 @@
 // Reviews Management System
 // Handles review display, submission, and management with JWT token refresh
 
-const API_BASE_URL = 'http://localhost:8000';
+// Ensure API_BASE_URL is defined (fallback if config.js hasn't loaded yet)
+if (typeof window.API_BASE_URL === 'undefined') {
+    window.API_BASE_URL = 'https://web-production-e6265.up.railway.app';
+    console.warn('⚠️ API_BASE_URL was undefined in reviews.js, using fallback:', window.API_BASE_URL);
+}
+
+const API_BASE_URL = window.API_BASE_URL;
 
 // ============================================
 // JWT TOKEN REFRESH FUNCTIONS (from chat.js pattern)
