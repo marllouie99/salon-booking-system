@@ -1091,9 +1091,12 @@ async function loadTransactions() {
 
 function calculateTransactionStats(transactions) {
     if (!Array.isArray(transactions) || transactions.length === 0) {
-        document.getElementById('totalRevenue').textContent = '₱0.00';
-        document.getElementById('pendingPayments').textContent = '₱0.00';
-        document.getElementById('totalTransactions').textContent = '0';
+        const revEl = document.getElementById('transactionTotalRevenue');
+        const pendEl = document.getElementById('transactionPendingPayments');
+        const countEl = document.getElementById('transactionTotalCount');
+        if (revEl) revEl.textContent = '₱0.00';
+        if (pendEl) pendEl.textContent = '₱0.00';
+        if (countEl) countEl.textContent = '0';
         return;
     }
     
@@ -1104,9 +1107,12 @@ function calculateTransactionStats(transactions) {
     const totalRevenue = completed.reduce((sum, t) => sum + parseFloat(t.salon_payout || t.amount || 0), 0);
     const pendingAmount = pending.reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
     
-    document.getElementById('transactionTotalRevenue').textContent = `₱${totalRevenue.toFixed(2)}`;
-    document.getElementById('transactionPendingPayments').textContent = `₱${pendingAmount.toFixed(2)}`;
-    document.getElementById('totalTransactions').textContent = transactions.length;
+    const revEl = document.getElementById('transactionTotalRevenue');
+    const pendEl = document.getElementById('transactionPendingPayments');
+    const countEl = document.getElementById('transactionTotalCount');
+    if (revEl) revEl.textContent = `₱${totalRevenue.toFixed(2)}`;
+    if (pendEl) pendEl.textContent = `₱${pendingAmount.toFixed(2)}`;
+    if (countEl) countEl.textContent = transactions.length;
 }
 
 function updateTransactionSummary(summary) {

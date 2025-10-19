@@ -17,7 +17,8 @@ async function refreshAccessToken() {
     }
     
     try {
-        const response = await fetch(`${window.API_BASE_URL}/api/token/refresh/`, {
+        // Use the correct backend endpoint mounted under /api/accounts/
+        const response = await fetch(`${window.API_BASE_URL}/api/accounts/token/refresh/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
