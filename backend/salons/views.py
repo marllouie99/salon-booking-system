@@ -601,6 +601,16 @@ def get_all_salons(request):
                     'max': max(prices)
                 }
             
+            # Get image URLs (Cloudinary returns full URLs, filesystem returns relative)
+            logo_url = salon.logo.url if salon.logo else None
+            cover_url = salon.cover_image.url if salon.cover_image else None
+            
+            # Only use build_absolute_uri for local filesystem URLs (start with /)
+            if logo_url and logo_url.startswith('/'):
+                logo_url = request.build_absolute_uri(logo_url)
+            if cover_url and cover_url.startswith('/'):
+                cover_url = request.build_absolute_uri(cover_url)
+            
             salons_data.append({
                 'id': salon.id,
                 'owner_id': salon.owner.id,
@@ -613,12 +623,12 @@ def get_all_salons(request):
                 'state': salon.state,
                 'postal_code': salon.postal_code,
                 'description': salon.description,
-                # Relative media paths (useful for concatenating with API base URL)
-                'logo': salon.logo.url if salon.logo else None,
-                'cover_image': salon.cover_image.url if salon.cover_image else None,
-                # Absolute URLs for immediate use by frontends
-                'logo_url': request.build_absolute_uri(salon.logo.url) if salon.logo else None,
-                'cover_image_url': request.build_absolute_uri(salon.cover_image.url) if salon.cover_image else None,
+                # For backward compatibility, keep both fields
+                'logo': logo_url,
+                'cover_image': cover_url,
+                # Absolute URLs (same as above for Cloudinary)
+                'logo_url': logo_url,
+                'cover_image_url': cover_url,
                 'services': services_list,
                 'services_detailed': [
                     {
@@ -1623,20 +1633,23 @@ def upload_salon_logo(request):
         salon.logo = logo
         salon.save()
         
+        # Get logo URL (Cloudinary returns full URL, no need for build_absolute_uri)
+        logo_url = salon.logo.url if salon.logo else None
+        
         # Log activity
         log_salon_activity(
             salon=salon,
             user=request.user,
             action="SALON LOGO UPDATED",
             details={
-                'logo_url': request.build_absolute_uri(salon.logo.url)
+                'logo_url': logo_url
             }
         )
         
         return Response({
             'message': 'Logo uploaded successfully',
-            # Return absolute URL for immediate frontend consumption
-            'logo_url': request.build_absolute_uri(salon.logo.url) if salon.logo else None
+            # Cloudinary URLs are already absolute, no need to build
+            'logo_url': logo_url
         }, status=status.HTTP_200_OK)
         
     except Exception as e:
@@ -1682,20 +1695,23 @@ def upload_salon_cover(request):
         salon.cover_image = cover_image
         salon.save()
         
+        # Get cover URL (Cloudinary returns full URL, no need for build_absolute_uri)
+        cover_url = salon.cover_image.url if salon.cover_image else None
+        
         # Log activity
         log_salon_activity(
             salon=salon,
             user=request.user,
             action="SALON COVER IMAGE UPDATED",
             details={
-                'cover_image_url': request.build_absolute_uri(salon.cover_image.url)
+                'cover_image_url': cover_url
             }
         )
         
         return Response({
             'message': 'Cover image uploaded successfully',
-            # Return absolute URL for immediate frontend consumption
-            'cover_image_url': request.build_absolute_uri(salon.cover_image.url) if salon.cover_image else None
+            # Cloudinary URLs are already absolute, no need to build
+            'cover_image_url': cover_url
         }, status=status.HTTP_200_OK)
         
     except Exception as e:
