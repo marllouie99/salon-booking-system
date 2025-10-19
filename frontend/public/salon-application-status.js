@@ -1,5 +1,11 @@
 // Salon Application Status Page JavaScript
 
+// Ensure API_BASE_URL is defined (fallback if config.js hasn't loaded yet)
+if (typeof window.API_BASE_URL === 'undefined') {
+    window.API_BASE_URL = 'https://web-production-e6265.up.railway.app';
+    console.warn('⚠️ API_BASE_URL was undefined in salon-application-status.js, using fallback:', window.API_BASE_URL);
+}
+
 // Token refresh function (from chat.js memory)
 async function refreshAccessToken() {
     const refreshToken = localStorage.getItem('refresh_token');
@@ -7,7 +13,7 @@ async function refreshAccessToken() {
         throw new Error('No refresh token available');
     }
 
-    const response = await fetch('http://localhost:8000/api/accounts/token/refresh/', {
+    const response = await fetch(`${window.API_BASE_URL}/api/accounts/token/refresh/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -64,7 +70,7 @@ async function loadApplicationStatus() {
     const applicationContent = document.getElementById('applicationContent');
 
     try {
-        const response = await authenticatedFetch('http://localhost:8000/api/salons/applications/my/');
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/applications/my/`);
 
         if (!response.ok) {
             throw new Error('Failed to load application');
