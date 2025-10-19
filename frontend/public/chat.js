@@ -402,8 +402,10 @@ class ChatManager {
             return;
         }
         
-        const chatListHTML = chats.map(chat => `
-            <div class="chat-item" onclick="window.activeChatManager.openChat(${chat.id}, ${chat.salon.id}, '${chat.salon.name}')">
+        const chatListHTML = chats.map(chat => {
+            const salonNameEscaped = chat.salon.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            return `
+            <div class="chat-item" onclick="window.activeChatManager.openChat(${chat.id}, ${chat.salon.id}, '${salonNameEscaped}')">
                 <div class="chat-item-info">
                     <div class="chat-item-name">${chat.salon.name}</div>
                     <div class="chat-item-last-message">
@@ -420,7 +422,8 @@ class ChatManager {
                     ${chat.unread_count > 0 ? `<div class="chat-item-unread">${chat.unread_count}</div>` : ''}
                 </div>
             </div>
-        `).join('');
+        `;
+        }).join('');
         
         this.messagesContainer.innerHTML = `
             <div class="chat-list">
