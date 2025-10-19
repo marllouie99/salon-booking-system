@@ -1435,7 +1435,7 @@ class SalonChatManager {
             return `
             <div class="chat-item" data-chat-id="${chat.id}" data-customer-id="${chat.customer.id}" data-customer-name="${customerName}">
                 <div class="chat-item-info">
-                    <div class="chat-item-name">${customerName}</div>`;
+                    <div class="chat-item-name">${customerName}</div>
                     <div class="chat-item-last-message">
                         ${chat.last_message ? 
                             (chat.last_message.sender_type === 'salon' ? 'You: ' : '') + 
