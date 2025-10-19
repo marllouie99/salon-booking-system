@@ -13,8 +13,19 @@ from .payment_utils import create_payment, execute_payment, refund_payment
 from .calendar_service import GoogleCalendarService
 from activity_logger import log_user_activity, log_salon_activity, log_booking_activity, log_transaction_activity
 from notifications.utils import create_booking_notification
+import logging
+
+# Import Brevo SDK if available
+try:
+    import sib_api_v3_sdk
+    from sib_api_v3_sdk.rest import ApiException
+    BREVO_SDK_AVAILABLE = True
+except ImportError:
+    BREVO_SDK_AVAILABLE = False
+    logging.warning("Brevo SDK not available. Email will use SMTP fallback.")
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 @api_view(['POST'])
@@ -303,10 +314,12 @@ def cancel_booking(request, booking_id):
         )
         
         # Send cancellation email to salon
+        logger.info(f"📧 Attempting to send cancellation email to salon: {booking.salon.email}")
+        print(f"📧 Attempting to send cancellation email to salon: {booking.salon.email}")
+        
         try:
-            send_mail(
-                subject=f'Booking Cancelled - {booking.salon.name}',
-                message=f"""
+            subject = f'Booking Cancelled - {booking.salon.name}'
+            message = f"""
 Booking #{booking.id} has been cancelled by the customer.
 
 Customer: {booking.customer_name}
@@ -315,13 +328,47 @@ Date: {booking.booking_date}
 Time: {booking.booking_time}
 
 Reason: {request.data.get('reason', 'Not provided')}
-                """,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[booking.salon.email],
-                fail_silently=True,
-            )
+            """
+            
+            # Use Brevo API if available
+            brevo_api_key = getattr(settings, 'BREVO_API_KEY', None)
+            
+            if brevo_api_key and BREVO_SDK_AVAILABLE:
+                try:
+                    configuration = sib_api_v3_sdk.Configuration()
+                    configuration.api_key['api-key'] = brevo_api_key
+                    
+                    api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+                    
+                    send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                        to=[{"email": booking.salon.email, "name": booking.salon.name}],
+                        sender={"email": settings.DEFAULT_FROM_EMAIL, "name": "Salon Booking System"},
+                        subject=subject,
+                        text_content=message
+                    )
+                    
+                    api_response = api_instance.send_transac_email(send_smtp_email)
+                    logger.info(f"✅ Cancellation email SENT via Brevo API - Message ID: {api_response.message_id}")
+                    print(f"✅ Cancellation email SENT via Brevo API")
+                    
+                except ApiException as e:
+                    logger.error(f"❌ Brevo API error: {e}")
+                    print(f"❌ Brevo API error: {e}")
+                    # Fall through to SMTP fallback
+            else:
+                send_mail(
+                    subject=subject,
+                    message=message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[booking.salon.email],
+                    fail_silently=True,
+                )
+                logger.info(f"✅ Cancellation email SENT via SMTP")
+                print(f"✅ Cancellation email SENT via SMTP")
+                
         except Exception as e:
-            print(f"Failed to send cancellation email: {e}")
+            logger.error(f"❌ Failed to send cancellation email: {e}", exc_info=True)
+            print(f"❌ Failed to send cancellation email: {e}")
         
         return Response({
             'message': 'Booking cancelled successfully',
@@ -414,14 +461,47 @@ Best regards,
 SalonBook Team
     """
     
+    logger.info(f"📧 Attempting to send booking confirmation email to: {booking.customer_email}")
+    print(f"📧 Attempting to send booking confirmation email to: {booking.customer_email}")
+    
     try:
-        send_mail(
-            subject=customer_subject,
-            message=customer_message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[booking.customer_email],
-            fail_silently=False,
-        )
+        # Use Brevo API if available
+        brevo_api_key = getattr(settings, 'BREVO_API_KEY', None)
+        
+        if brevo_api_key and BREVO_SDK_AVAILABLE:
+            try:
+                configuration = sib_api_v3_sdk.Configuration()
+                configuration.api_key['api-key'] = brevo_api_key
+                
+                api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+                
+                # Send to customer
+                send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                    to=[{"email": booking.customer_email, "name": booking.customer_name}],
+                    sender={"email": settings.DEFAULT_FROM_EMAIL, "name": "Salon Booking System"},
+                    subject=customer_subject,
+                    text_content=customer_message
+                )
+                
+                api_response = api_instance.send_transac_email(send_smtp_email)
+                logger.info(f"✅ Customer booking confirmation SENT via Brevo API - Message ID: {api_response.message_id}")
+                print(f"✅ Customer booking confirmation SENT via Brevo API")
+                
+            except ApiException as e:
+                logger.error(f"❌ Brevo API error: {e}")
+                print(f"❌ Brevo API error: {e}")
+                # Fall through to SMTP fallback
+        else:
+            # Fallback to SMTP
+            send_mail(
+                subject=customer_subject,
+                message=customer_message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[booking.customer_email],
+                fail_silently=False,
+            )
+            logger.info(f"✅ Customer booking confirmation SENT via SMTP")
+            print(f"✅ Customer booking confirmation SENT via SMTP")
         
         # Email to salon owner
         salon_subject = f'New Booking - {booking.customer_name}'
@@ -445,15 +525,37 @@ Notes: {booking.notes or 'None'}
 Please confirm or manage this booking in your dashboard.
         """
         
-        send_mail(
-            subject=salon_subject,
-            message=salon_message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[booking.salon.email],
-            fail_silently=False,
-        )
+        if brevo_api_key and BREVO_SDK_AVAILABLE:
+            try:
+                # Send to salon
+                send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                    to=[{"email": booking.salon.email, "name": booking.salon.name}],
+                    sender={"email": settings.DEFAULT_FROM_EMAIL, "name": "Salon Booking System"},
+                    subject=salon_subject,
+                    text_content=salon_message
+                )
+                
+                api_response = api_instance.send_transac_email(send_smtp_email)
+                logger.info(f"✅ Salon booking notification SENT via Brevo API - Message ID: {api_response.message_id}")
+                print(f"✅ Salon booking notification SENT via Brevo API")
+                
+            except ApiException as e:
+                logger.error(f"❌ Brevo API error for salon: {e}")
+                print(f"❌ Brevo API error for salon: {e}")
+        else:
+            send_mail(
+                subject=salon_subject,
+                message=salon_message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[booking.salon.email],
+                fail_silently=False,
+            )
+            logger.info(f"✅ Salon booking notification SENT via SMTP")
+            print(f"✅ Salon booking notification SENT via SMTP")
+            
     except Exception as e:
-        print(f"Failed to send booking confirmation email: {e}")
+        logger.error(f"❌ Failed to send booking confirmation email: {e}", exc_info=True)
+        print(f"❌ Failed to send booking confirmation email: {e}")
 
 
 @api_view(['GET'])
@@ -697,7 +799,38 @@ SalonBook Team
     else:
         return
     
+    logger.info(f"📧 Attempting to send status update email to: {booking.customer_email}")
+    print(f"📧 Attempting to send status update email to: {booking.customer_email}")
+    
     try:
+        # Use Brevo API if available
+        brevo_api_key = getattr(settings, 'BREVO_API_KEY', None)
+        
+        if brevo_api_key and BREVO_SDK_AVAILABLE:
+            try:
+                configuration = sib_api_v3_sdk.Configuration()
+                configuration.api_key['api-key'] = brevo_api_key
+                
+                api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+                
+                send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                    to=[{"email": booking.customer_email, "name": booking.customer_name}],
+                    sender={"email": settings.DEFAULT_FROM_EMAIL, "name": "Salon Booking System"},
+                    subject=subject,
+                    text_content=message
+                )
+                
+                api_response = api_instance.send_transac_email(send_smtp_email)
+                logger.info(f"✅ Status update email SENT via Brevo API - Message ID: {api_response.message_id}")
+                print(f"[SUCCESS] Status update email sent to {booking.customer_email} for booking #{booking.id}")
+                return
+                
+            except ApiException as e:
+                logger.error(f"❌ Brevo API error: {e}")
+                print(f"❌ Brevo API error: {e}")
+                # Fall through to SMTP fallback
+        
+        # Fallback to SMTP
         send_mail(
             subject=subject,
             message=message,
@@ -705,8 +838,11 @@ SalonBook Team
             recipient_list=[booking.customer_email],
             fail_silently=False,
         )
+        logger.info(f"✅ Status update email SENT via SMTP")
         print(f"[SUCCESS] Status update email sent to {booking.customer_email} for booking #{booking.id}")
+        
     except Exception as e:
+        logger.error(f"❌ Failed to send status update email: {e}", exc_info=True)
         print(f"[ERROR] Failed to send status update email: {e}")
         # Log the error but don't fail the request
         import traceback

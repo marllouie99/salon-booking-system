@@ -1,7 +1,18 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+import logging
+
+# Import Brevo SDK if available
+try:
+    import sib_api_v3_sdk
+    from sib_api_v3_sdk.rest import ApiException
+    BREVO_SDK_AVAILABLE = True
+except ImportError:
+    BREVO_SDK_AVAILABLE = False
+    logging.warning("Brevo SDK not available. Email will use SMTP fallback.")
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 class SalonApplication(models.Model):
@@ -254,12 +265,11 @@ class Review(models.Model):
         from django.core.mail import send_mail
         from django.conf import settings
         
-        try:
-            subject = f'New Review for {self.salon.name}'
-            
-            status_text = '5-star review was automatically approved!' if self.status == 'approved' else 'review is pending moderation.'
-            
-            message = f"""
+        subject = f'New Review for {self.salon.name}'
+        
+        status_text = '5-star review was automatically approved!' if self.status == 'approved' else 'review is pending moderation.'
+        
+        message = f"""
 Hello {self.salon.owner.first_name or 'Salon Owner'},
 
 You have received a new {self.rating}-star review for your salon "{self.salon.name}".
@@ -279,8 +289,40 @@ Thank you for being part of our platform!
 
 Best regards,
 SalonBook Team
-            """
+        """
+        
+        logger.info(f"📧 Attempting to send review notification to: {self.salon.owner.email}")
+        print(f"📧 Attempting to send review notification to: {self.salon.owner.email}")
+        
+        try:
+            # Use Brevo API if available
+            brevo_api_key = getattr(settings, 'BREVO_API_KEY', None)
             
+            if brevo_api_key and BREVO_SDK_AVAILABLE:
+                try:
+                    configuration = sib_api_v3_sdk.Configuration()
+                    configuration.api_key['api-key'] = brevo_api_key
+                    
+                    api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+                    
+                    send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                        to=[{"email": self.salon.owner.email, "name": self.salon.owner.first_name or 'Salon Owner'}],
+                        sender={"email": settings.DEFAULT_FROM_EMAIL, "name": "Salon Booking System"},
+                        subject=subject,
+                        text_content=message
+                    )
+                    
+                    api_response = api_instance.send_transac_email(send_smtp_email)
+                    logger.info(f"✅ Review notification SENT via Brevo API - Message ID: {api_response.message_id}")
+                    print(f"✅ Review notification SENT via Brevo API")
+                    return
+                    
+                except ApiException as e:
+                    logger.error(f"❌ Brevo API error: {e}")
+                    print(f"❌ Brevo API error: {e}")
+                    # Fall through to SMTP fallback
+            
+            # Fallback to SMTP
             send_mail(
                 subject,
                 message,
@@ -288,5 +330,9 @@ SalonBook Team
                 [self.salon.owner.email],
                 fail_silently=True,
             )
+            logger.info(f"✅ Review notification SENT via SMTP")
+            print(f"✅ Review notification SENT via SMTP")
+            
         except Exception as e:
-            print(f'Error sending review notification: {e}')
+            logger.error(f"❌ Error sending review notification: {e}", exc_info=True)
+            print(f'❌ Error sending review notification: {e}')
