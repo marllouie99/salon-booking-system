@@ -1,3 +1,9 @@
+// Ensure API_BASE_URL is defined (fallback if config.js hasn't loaded yet)
+if (typeof window.API_BASE_URL === 'undefined') {
+    window.API_BASE_URL = 'https://web-production-e6265.up.railway.app';
+    console.warn('⚠️ API_BASE_URL was undefined in salon-owner-dashboard.js, using fallback:', window.API_BASE_URL);
+}
+
 let salonData = null;
 let servicesData = [];
 let allBookings = [];
@@ -150,7 +156,7 @@ function loadUserData() {
 
 async function loadSalonData() {
     try {
-        const response = await authenticatedFetch('http://localhost:8000/api/salons/');
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/');
         
         if (response.ok) {
             const allSalons = await response.json();
@@ -217,7 +223,7 @@ function displaySalonInfo() {
             console.log('Setting cover from cover_image:', salonData.cover_image);
             const coverUrl = salonData.cover_image.startsWith('http') 
                 ? salonData.cover_image 
-                : `http://localhost:8000${salonData.cover_image}`;
+                : `${window.API_BASE_URL}${salonData.cover_image}`;
             coverEl.style.backgroundImage = `url('${coverUrl}')`;
         } else {
             console.log('No cover image found, using default gradient');
@@ -234,7 +240,7 @@ function displaySalonInfo() {
             console.log('Setting logo from logo:', salonData.logo);
             const logoUrl = salonData.logo.startsWith('http') 
                 ? salonData.logo 
-                : `http://localhost:8000${salonData.logo}`;
+                : `${window.API_BASE_URL}${salonData.logo}`;
             logoEl.innerHTML = `<img src="${logoUrl}" alt="${salonData.name} Logo">`;
         } else {
             console.log('No logo found, using default icon');
@@ -315,7 +321,7 @@ function updateStats() {
 
 async function loadServices() {
     try {
-        const response = await authenticatedFetch('http://localhost:8000/api/salons/services/');
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/services/');
         
         if (response.ok) {
             servicesData = await response.json();
@@ -431,7 +437,7 @@ document.getElementById('editSalonForm').addEventListener('submit', async functi
     
     try {
         showNotification('Saving salon profile...', 'info');
-        const response = await authenticatedFetch('http://localhost:8000/api/salons/profile/', {
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/profile/', {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -474,7 +480,7 @@ document.getElementById('addServiceForm').addEventListener('submit', async funct
         
         showNotification('Adding service...', 'info');
         
-        const response = await authenticatedFetch('http://localhost:8000/api/salons/services/', {
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/services/', {
             method: 'POST',
             body: formData,
             isFormData: true
@@ -539,7 +545,7 @@ function deleteService(serviceId, serviceName) {
         return;
     }
     
-    authenticatedFetch(`http://localhost:8000/api/salons/services/${serviceId}/`, {
+    authenticatedFetch(`${window.API_BASE_URL}/api/salons/services/${serviceId}/`, {
         method: 'DELETE'
     })
     .then(response => response.json())
@@ -560,7 +566,7 @@ function deleteService(serviceId, serviceName) {
 // Load bookings
 async function loadBookings() {
     try {
-        const response = await authenticatedFetch('http://localhost:8000/api/bookings/salon-bookings/');
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/bookings/salon-bookings/');
         
         if (response.ok) {
             allBookings = await response.json();
@@ -683,7 +689,7 @@ async function updateBookingStatus(bookingId, newStatus) {
         
         showNotification(`${action.charAt(0).toUpperCase() + action.slice(1)}ing booking...`, 'info');
         
-        const response = await authenticatedFetch(`http://localhost:8000/api/bookings/${bookingId}/update-status/`, {
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/bookings/${bookingId}/update-status/`, {
             method: 'POST',
             body: JSON.stringify({ status: newStatus })
         });
@@ -1028,7 +1034,7 @@ let currentFilter = 'all';
 
 async function loadTransactions() {
     try {
-        const response = await authenticatedFetch('http://localhost:8000/api/bookings/salon-transactions/');
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/bookings/salon-transactions/');
         
         const data = await response.json();
         console.log('Transactions API response:', data);
@@ -1650,7 +1656,7 @@ async function loadSalonReviews() {
         // Use authenticatedFetch to send token so salon owner can see all reviews
         // Add cache-busting parameter to ensure fresh data
         const timestamp = new Date().getTime();
-        const response = await authenticatedFetch(`http://localhost:8000/api/salons/${salonData.id}/reviews/?_=${timestamp}`, {
+        const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/${salonData.id}/reviews/?_=${timestamp}`, {
             cache: 'no-cache'
         });
         
@@ -1806,7 +1812,7 @@ function uploadSalonLogo() {
         
         try {
             showNotification('Uploading logo...', 'info');
-            const response = await authenticatedFetch('http://localhost:8000/api/salons/upload-logo/', {
+            const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/upload-logo/', {
                 method: 'POST',
                 body: formData,
                 isFormData: true
@@ -1847,7 +1853,7 @@ function uploadSalonCover() {
         
         try {
             showNotification('Uploading cover image...', 'info');
-            const response = await authenticatedFetch('http://localhost:8000/api/salons/upload-cover/', {
+            const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/upload-cover/', {
                 method: 'POST',
                 body: formData,
                 isFormData: true
@@ -2036,7 +2042,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             try {
                 showNotification('Updating service...', 'info');
-                const response = await authenticatedFetch(`http://localhost:8000/api/salons/services/${serviceId}/`, {
+                const response = await authenticatedFetch(`${window.API_BASE_URL}/api/salons/services/${serviceId}/`, {
                     method: 'PUT',
                     body: formData,
                     isFormData: true
