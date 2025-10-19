@@ -227,43 +227,76 @@ function displaySalonInfo() {
     document.getElementById('salonPhoneText').textContent = salonData.phone;
     document.getElementById('salonEmailText').textContent = salonData.email;
     
-    // Display cover image with cache-busting
+    // Display cover image with cache-busting and loading state
     const coverEl = document.getElementById('salonCover');
     if (coverEl) {
-        if (salonData.cover_image_url) {
-            console.log('Setting cover from cover_image_url:', salonData.cover_image_url);
-            // Add cache-busting timestamp to force reload after upload
+        if (salonData.cover_image_url || salonData.cover_image) {
+            const rawUrl = salonData.cover_image_url || 
+                (salonData.cover_image.startsWith('http') 
+                    ? salonData.cover_image 
+                    : `${window.API_BASE_URL}${salonData.cover_image}`);
+            
+            const finalUrl = ensureHttps(rawUrl);
             const cacheBuster = `?t=${Date.now()}`;
-            coverEl.style.backgroundImage = `url('${ensureHttps(salonData.cover_image_url)}${cacheBuster}')`;
-            coverEl.style.backgroundSize = 'cover';
-            coverEl.style.backgroundPosition = 'center';
-        } else if (salonData.cover_image) {
-            console.log('Setting cover from cover_image:', salonData.cover_image);
-            const coverUrl = salonData.cover_image.startsWith('http') 
-                ? salonData.cover_image 
-                : `${window.API_BASE_URL}${salonData.cover_image}`;
-            const cacheBuster = `?t=${Date.now()}`;
-            coverEl.style.backgroundImage = `url('${ensureHttps(coverUrl)}${cacheBuster}')`;
-            coverEl.style.backgroundSize = 'cover';
-            coverEl.style.backgroundPosition = 'center';
+            const fullUrl = finalUrl + cacheBuster;
+            
+            console.log('🖼️ Loading cover image:', fullUrl);
+            
+            // Add loading state
+            coverEl.classList.add('loading');
+            
+            // Preload image to check if it loads
+            const testImg = new Image();
+            testImg.onload = () => {
+                console.log('✅ Cover image loaded successfully');
+                coverEl.style.backgroundImage = `url('${fullUrl}')`;
+                coverEl.style.backgroundSize = 'cover';
+                coverEl.style.backgroundPosition = 'center';
+                coverEl.classList.remove('loading');
+            };
+            testImg.onerror = () => {
+                console.error('❌ Cover image failed to load:', fullUrl);
+                coverEl.classList.remove('loading');
+                // Keep default gradient
+            };
+            testImg.src = fullUrl;
         } else {
             console.log('No cover image found, using default gradient');
-            // Keep the default gradient from CSS
         }
     }
     
-    // Display logo with cache-busting and error handling
+    // Display logo with cache-busting, loading state, and error handling
     const logoEl = document.getElementById('salonLogo');
     if (logoEl) {
         const setLogoImg = (src) => {
             const cacheBuster = `?t=${Date.now()}`;
+            const finalUrl = ensureHttps(src) + cacheBuster;
+            
+            console.log('🖼️ Loading logo image:', finalUrl);
+            
+            // Add loading state
+            logoEl.classList.add('loading');
             logoEl.innerHTML = '';
+            
             const img = document.createElement('img');
             img.alt = `${salonData.name} Logo`;
-            img.onerror = () => { logoEl.innerHTML = '<i class="fas fa-store"></i>'; };
-            img.src = ensureHttps(src) + cacheBuster;
+            
+            img.onload = () => {
+                console.log('✅ Logo image loaded successfully');
+                img.classList.add('loaded');
+                logoEl.classList.remove('loading');
+            };
+            
+            img.onerror = () => {
+                console.error('❌ Logo image failed to load:', finalUrl);
+                logoEl.classList.remove('loading');
+                logoEl.innerHTML = '<i class="fas fa-store"></i>';
+            };
+            
+            img.src = finalUrl;
             logoEl.appendChild(img);
         };
+        
         if (salonData.logo_url) {
             console.log('Setting logo from logo_url:', salonData.logo_url);
             setLogoImg(salonData.logo_url);
@@ -275,7 +308,6 @@ function displaySalonInfo() {
             setLogoImg(logoUrl);
         } else {
             console.log('No logo found, using default icon');
-            // Default icon if no logo
             logoEl.innerHTML = '<i class="fas fa-store"></i>';
         }
     }
