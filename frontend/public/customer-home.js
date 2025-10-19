@@ -244,7 +244,7 @@ function displayFeaturedSalons(salons) {
         // Handle logo - use salon's logo if available, otherwise use placeholder
         const logoImage = salon.logo 
             ? `${window.API_BASE_URL}${salon.logo}` 
-            : 'https://via.placeholder.com/80x80?text=' + encodeURIComponent(salon.name.charAt(0));
+            : `https://ui-avatars.com/api/?name=${encodeURIComponent(salon.name)}&size=80&background=6366f1&color=fff&bold=true`;
         
         return `
         <div class="salon-card" onclick="openBookingModal(${salon.id})">
@@ -255,7 +255,7 @@ function displayFeaturedSalons(salons) {
                     <i class="far fa-heart"></i>
                 </button>
                 <div class="salon-logo">
-                    <img src="${logoImage}" alt="${salon.name} logo" onerror="this.src='https://via.placeholder.com/80x80?text=${encodeURIComponent(salon.name.charAt(0))}'">
+                    <img src="${logoImage}" alt="${salon.name} logo" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(salon.name)}&size=80&background=6366f1&color=fff&bold=true'">
                 </div>
             </div>
             <div class="salon-info">
@@ -829,23 +829,23 @@ function createSalonCard(salon) {
     // Handle cover image - use salon's cover_image if available, otherwise use placeholder
     const coverImage = salon.cover_image 
         ? `${window.API_BASE_URL}${salon.cover_image}` 
-        : `https://via.placeholder.com/300x200?text=${encodeURIComponent(salon.name)}`;
+        : 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=250&fit=crop';
     
     // Handle logo - use salon's logo if available, otherwise use placeholder
     const logoImage = salon.logo 
         ? `${window.API_BASE_URL}${salon.logo}` 
-        : 'https://via.placeholder.com/80x80?text=' + encodeURIComponent(salon.name.charAt(0));
+        : `https://ui-avatars.com/api/?name=${encodeURIComponent(salon.name)}&size=80&background=6366f1&color=fff&bold=true`;
     
     return `
         <div class="salon-card" onclick="openBookingModal(${salon.id})">
             <div class="salon-image">
-                <img src="${coverImage}" alt="${salon.name}" onerror="this.src='https://via.placeholder.com/300x200?text=${encodeURIComponent(salon.name)}'">
+                <img src="${coverImage}" alt="${salon.name}" onerror="this.src='https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=250&fit=crop'">
                 ${verified}
                 <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(${salon.id})">
                     <i class="far fa-heart"></i>
                 </button>
                 <div class="salon-logo">
-                    <img src="${logoImage}" alt="${salon.name} logo" onerror="this.src='https://via.placeholder.com/80x80?text=${encodeURIComponent(salon.name.charAt(0))}'">
+                    <img src="${logoImage}" alt="${salon.name} logo" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(salon.name)}&size=80&background=6366f1&color=fff&bold=true'">
                 </div>
             </div>
             <div class="salon-info">
