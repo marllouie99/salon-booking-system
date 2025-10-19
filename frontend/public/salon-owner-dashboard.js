@@ -213,35 +213,46 @@ function displaySalonInfo() {
     document.getElementById('salonPhoneText').textContent = salonData.phone;
     document.getElementById('salonEmailText').textContent = salonData.email;
     
-    // Display cover image
+    // Display cover image with cache-busting
     const coverEl = document.getElementById('salonCover');
     if (coverEl) {
         if (salonData.cover_image_url) {
             console.log('Setting cover from cover_image_url:', salonData.cover_image_url);
-            coverEl.style.backgroundImage = `url('${salonData.cover_image_url}')`;
+            // Add cache-busting timestamp to force reload after upload
+            const cacheBuster = `?t=${Date.now()}`;
+            coverEl.style.backgroundImage = `url('${salonData.cover_image_url}${cacheBuster}')`;
+            coverEl.style.backgroundSize = 'cover';
+            coverEl.style.backgroundPosition = 'center';
         } else if (salonData.cover_image) {
             console.log('Setting cover from cover_image:', salonData.cover_image);
             const coverUrl = salonData.cover_image.startsWith('http') 
                 ? salonData.cover_image 
                 : `${window.API_BASE_URL}${salonData.cover_image}`;
-            coverEl.style.backgroundImage = `url('${coverUrl}')`;
+            const cacheBuster = `?t=${Date.now()}`;
+            coverEl.style.backgroundImage = `url('${coverUrl}${cacheBuster}')`;
+            coverEl.style.backgroundSize = 'cover';
+            coverEl.style.backgroundPosition = 'center';
         } else {
             console.log('No cover image found, using default gradient');
+            // Keep the default gradient from CSS
         }
     }
     
-    // Display logo
+    // Display logo with cache-busting and error handling
     const logoEl = document.getElementById('salonLogo');
     if (logoEl) {
         if (salonData.logo_url) {
             console.log('Setting logo from logo_url:', salonData.logo_url);
-            logoEl.innerHTML = `<img src="${salonData.logo_url}" alt="${salonData.name} Logo">`;
+            // Add cache-busting timestamp to force reload after upload
+            const cacheBuster = `?t=${Date.now()}`;
+            logoEl.innerHTML = `<img src="${salonData.logo_url}${cacheBuster}" alt="${salonData.name} Logo" onerror="this.parentElement.innerHTML='<i class=\\'fas fa-store\\'></i>';">`;
         } else if (salonData.logo) {
             console.log('Setting logo from logo:', salonData.logo);
             const logoUrl = salonData.logo.startsWith('http') 
                 ? salonData.logo 
                 : `${window.API_BASE_URL}${salonData.logo}`;
-            logoEl.innerHTML = `<img src="${logoUrl}" alt="${salonData.name} Logo">`;
+            const cacheBuster = `?t=${Date.now()}`;
+            logoEl.innerHTML = `<img src="${logoUrl}${cacheBuster}" alt="${salonData.name} Logo" onerror="this.parentElement.innerHTML='<i class=\\'fas fa-store\\'></i>';">`;
         } else {
             console.log('No logo found, using default icon');
             // Default icon if no logo
@@ -1807,6 +1818,13 @@ function uploadSalonLogo() {
             return;
         }
         
+        // Add uploading state to button
+        const uploadBtn = document.querySelector('.logo-upload-btn');
+        if (uploadBtn) {
+            uploadBtn.classList.add('uploading');
+            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        }
+        
         const formData = new FormData();
         formData.append('logo', file);
         
@@ -1821,7 +1839,16 @@ function uploadSalonLogo() {
             const data = await response.json();
             if (response.ok) {
                 showNotification('Logo uploaded successfully!', 'success');
-                // Reload salon data to get the updated logo URL
+                // Update logo immediately with the returned URL (includes cache-busting)
+                if (data.logo_url) {
+                    salonData.logo_url = data.logo_url;
+                    const logoEl = document.getElementById('salonLogo');
+                    if (logoEl) {
+                        const cacheBuster = `?t=${Date.now()}`;
+                        logoEl.innerHTML = `<img src="${data.logo_url}${cacheBuster}" alt="${salonData.name} Logo" onerror="this.parentElement.innerHTML='<i class=\\'fas fa-store\\'></i>';">`;
+                    }
+                }
+                // Also reload salon data to ensure consistency
                 await loadSalonData();
             } else {
                 showNotification(data.error || 'Failed to upload logo', 'error');
@@ -1829,6 +1856,12 @@ function uploadSalonLogo() {
         } catch (error) {
             console.error('Logo upload error:', error);
             showNotification('Network error. Please try again.', 'error');
+        } finally {
+            // Remove uploading state
+            if (uploadBtn) {
+                uploadBtn.classList.remove('uploading');
+                uploadBtn.innerHTML = '<i class="fas fa-camera"></i>';
+            }
         }
     };
     input.click();
@@ -1848,6 +1881,13 @@ function uploadSalonCover() {
             return;
         }
         
+        // Add uploading state to button
+        const uploadBtn = document.querySelector('.cover-upload-btn');
+        if (uploadBtn) {
+            uploadBtn.classList.add('uploading');
+            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        }
+        
         const formData = new FormData();
         formData.append('cover_image', file);
         
@@ -1862,7 +1902,18 @@ function uploadSalonCover() {
             const data = await response.json();
             if (response.ok) {
                 showNotification('Cover image uploaded successfully!', 'success');
-                // Reload salon data to get the updated cover URL
+                // Update cover immediately with the returned URL (includes cache-busting)
+                if (data.cover_image_url) {
+                    salonData.cover_image_url = data.cover_image_url;
+                    const coverEl = document.getElementById('salonCover');
+                    if (coverEl) {
+                        const cacheBuster = `?t=${Date.now()}`;
+                        coverEl.style.backgroundImage = `url('${data.cover_image_url}${cacheBuster}')`;
+                        coverEl.style.backgroundSize = 'cover';
+                        coverEl.style.backgroundPosition = 'center';
+                    }
+                }
+                // Also reload salon data to ensure consistency
                 await loadSalonData();
             } else {
                 showNotification(data.error || 'Failed to upload cover image', 'error');
@@ -1870,6 +1921,12 @@ function uploadSalonCover() {
         } catch (error) {
             console.error('Cover upload error:', error);
             showNotification('Network error. Please try again.', 'error');
+        } finally {
+            // Remove uploading state
+            if (uploadBtn) {
+                uploadBtn.classList.remove('uploading');
+                uploadBtn.innerHTML = '<i class="fas fa-camera"></i>';
+            }
         }
     };
     input.click();

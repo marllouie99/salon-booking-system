@@ -170,7 +170,11 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # WhiteNoise configuration for serving static files in production
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-MEDIA_URL = 'media/'
+# Important: MEDIA_URL should start with a leading slash so FileField.url yields
+# paths like "/media/..." instead of "media/...". Without the leading slash,
+# the frontend concatenation `${API_BASE_URL}${path}` would miss a separator
+# (e.g., https://api.example.commedia/...), causing images not to render.
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type

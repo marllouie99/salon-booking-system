@@ -613,8 +613,12 @@ def get_all_salons(request):
                 'state': salon.state,
                 'postal_code': salon.postal_code,
                 'description': salon.description,
+                # Relative media paths (useful for concatenating with API base URL)
                 'logo': salon.logo.url if salon.logo else None,
                 'cover_image': salon.cover_image.url if salon.cover_image else None,
+                # Absolute URLs for immediate use by frontends
+                'logo_url': request.build_absolute_uri(salon.logo.url) if salon.logo else None,
+                'cover_image_url': request.build_absolute_uri(salon.cover_image.url) if salon.cover_image else None,
                 'services': services_list,
                 'services_detailed': [
                     {
@@ -1631,7 +1635,8 @@ def upload_salon_logo(request):
         
         return Response({
             'message': 'Logo uploaded successfully',
-            'logo_url': salon.logo.url if salon.logo else None
+            # Return absolute URL for immediate frontend consumption
+            'logo_url': request.build_absolute_uri(salon.logo.url) if salon.logo else None
         }, status=status.HTTP_200_OK)
         
     except Exception as e:
@@ -1689,7 +1694,8 @@ def upload_salon_cover(request):
         
         return Response({
             'message': 'Cover image uploaded successfully',
-            'cover_image_url': salon.cover_image.url if salon.cover_image else None
+            # Return absolute URL for immediate frontend consumption
+            'cover_image_url': request.build_absolute_uri(salon.cover_image.url) if salon.cover_image else None
         }, status=status.HTTP_200_OK)
         
     except Exception as e:

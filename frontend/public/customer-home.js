@@ -236,15 +236,19 @@ function displayFeaturedSalons(salons) {
             servicesHtml = '<span class="service-tag">Hair Services</span><span class="service-tag">Beauty</span>';
         }
         
-        // Handle cover image - use salon's cover_image if available, otherwise use placeholder
-        const coverImage = salon.cover_image 
-            ? `${window.API_BASE_URL}${salon.cover_image}` 
-            : 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=250&fit=crop';
+        // Handle cover image - prefer absolute URL from API, then fallback to relative path
+        const coverImage = salon.cover_image_url
+            ? salon.cover_image_url
+            : (salon.cover_image 
+                ? `${window.API_BASE_URL}${salon.cover_image}` 
+                : 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=250&fit=crop');
         
-        // Handle logo - use salon's logo if available, otherwise use placeholder
-        const logoImage = salon.logo 
-            ? `${window.API_BASE_URL}${salon.logo}` 
-            : `https://ui-avatars.com/api/?name=${encodeURIComponent(salon.name)}&size=80&background=6366f1&color=fff&bold=true`;
+        // Handle logo - prefer absolute URL from API, then fallback to relative path
+        const logoImage = salon.logo_url
+            ? salon.logo_url
+            : (salon.logo 
+                ? `${window.API_BASE_URL}${salon.logo}` 
+                : `https://ui-avatars.com/api/?name=${encodeURIComponent(salon.name)}&size=80&background=6366f1&color=fff&bold=true`);
         
         return `
         <div class="salon-card" onclick="openBookingModal(${salon.id})">
@@ -838,15 +842,19 @@ function createSalonCard(salon) {
     const reviewText = salon.total_reviews === 1 ? 'review' : 'reviews';
     const priceRange = salon.price_range ? `₱${salon.price_range.min} - ₱${salon.price_range.max}` : 'View Prices';
     
-    // Handle cover image - use salon's cover_image if available, otherwise use placeholder
-    const coverImage = salon.cover_image 
-        ? `${window.API_BASE_URL}${salon.cover_image}` 
-        : 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=250&fit=crop';
+    // Handle cover image - prefer absolute URL from API, then fallback to relative path
+    const coverImage = salon.cover_image_url
+        ? salon.cover_image_url
+        : (salon.cover_image 
+            ? `${window.API_BASE_URL}${salon.cover_image}` 
+            : 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=250&fit=crop');
     
-    // Handle logo - use salon's logo if available, otherwise use placeholder
-    const logoImage = salon.logo 
-        ? `${window.API_BASE_URL}${salon.logo}` 
-        : `https://ui-avatars.com/api/?name=${encodeURIComponent(salon.name)}&size=80&background=6366f1&color=fff&bold=true`;
+    // Handle logo - prefer absolute URL from API, then fallback to relative path
+    const logoImage = salon.logo_url
+        ? salon.logo_url
+        : (salon.logo 
+            ? `${window.API_BASE_URL}${salon.logo}` 
+            : `https://ui-avatars.com/api/?name=${encodeURIComponent(salon.name)}&size=80&background=6366f1&color=fff&bold=true`);
     
     return `
         <div class="salon-card" onclick="openBookingModal(${salon.id})">

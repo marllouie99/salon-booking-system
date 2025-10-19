@@ -79,6 +79,22 @@ body {
     transform: scale(1.1);
 }
 
+.cover-upload-btn.uploading {
+    animation: pulse 1.5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+}
+
 .salon-logo-overlay {
     position: absolute;
     bottom: -50px;
@@ -135,6 +151,11 @@ body {
 .logo-upload-btn:hover {
     background: rgba(0, 0, 0, 0.9);
     transform: scale(1.1);
+}
+
+.logo-upload-btn.uploading {
+    animation: pulse 1.5s ease-in-out infinite;
+    pointer-events: none;
 }
 
 /* Content Wrapper for Cards */
