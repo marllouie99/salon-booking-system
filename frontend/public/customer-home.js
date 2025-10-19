@@ -280,7 +280,7 @@ function displayFeaturedSalons(salons) {
                         }
                     </div>
                     <div class="salon-actions">
-                        <button class="btn-chat" onclick="event.stopPropagation(); startChatWithSalon(${salon.id}, '${salon.name.replace(/'/g, "\\'")}')">
+                        <button class="btn-chat" data-salon-id="${salon.id}" data-salon-name="${salon.name}">
                             <i class="fas fa-comment"></i> Chat
                         </button>
                         <button class="btn-book" onclick="event.stopPropagation(); openBookingModal(${salon.id})">
@@ -292,6 +292,18 @@ function displayFeaturedSalons(salons) {
         </div>
         `;
     }).join('');
+    
+    // Add event listeners for chat buttons
+    document.querySelectorAll('.btn-chat').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const salonId = parseInt(button.dataset.salonId);
+            const salonName = button.dataset.salonName;
+            if (typeof startChatWithSalon === 'function') {
+                startChatWithSalon(salonId, salonName);
+            }
+        });
+    });
 }
 
 // Generate star rating HTML
@@ -871,7 +883,7 @@ function createSalonCard(salon) {
                         <strong>${priceRange}</strong>
                     </div>
                     <div class="salon-actions">
-                        <button class="btn-chat" onclick="event.stopPropagation(); startChatWithSalon(${salon.id}, '${salon.name.replace(/'/g, "\\'")}')">
+                        <button class="btn-chat" data-salon-id="${salon.id}" data-salon-name="${salon.name}">
                             <i class="fas fa-comment"></i> Chat
                         </button>
                         <button class="btn-book" onclick="event.stopPropagation(); openBookingModal(${salon.id})">

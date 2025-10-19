@@ -403,7 +403,7 @@ class ChatManager {
         }
         
         const chatListHTML = chats.map(chat => `
-            <div class="chat-item" onclick="window.activeChatManager.openChat(${chat.id}, ${chat.salon.id}, '${chat.salon.name.replace(/'/g, "\\'")}')">
+            <div class="chat-item" data-chat-id="${chat.id}" data-salon-id="${chat.salon.id}" data-salon-name="${chat.salon.name}">
                 <div class="chat-item-info">
                     <div class="chat-item-name">${chat.salon.name}</div>
                     <div class="chat-item-last-message">
@@ -427,6 +427,16 @@ class ChatManager {
                 ${chatListHTML}
             </div>
         `;
+        
+        // Add click event listeners to chat items
+        document.querySelectorAll('.chat-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const chatId = parseInt(item.dataset.chatId);
+                const salonId = parseInt(item.dataset.salonId);
+                const salonName = item.dataset.salonName;
+                this.openChat(chatId, salonId, salonName);
+            });
+        });
         
         document.getElementById('chatTitle').textContent = 'Your Chats';
         document.getElementById('chatInput').style.display = 'none';
@@ -1420,7 +1430,7 @@ class SalonChatManager {
         }
         
         const chatListHTML = chats.map(chat => `
-            <div class="chat-item" onclick="window.activeChatManager.openChat(${chat.id}, ${chat.salon.id}, '${chat.salon.name.replace(/'/g, "\\'")}')">
+            <div class="chat-item" data-chat-id="${chat.id}" data-salon-id="${chat.salon.id}" data-salon-name="${chat.salon.name}">
                 <div class="chat-item-info">
                     <div class="chat-item-name">${chat.salon.name}</div>
                     <div class="chat-item-last-message">
@@ -1445,6 +1455,16 @@ class SalonChatManager {
                 ${chatListHTML}
             </div>
         `;
+        
+        // Add click event listeners to chat items
+        document.querySelectorAll('.chat-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const chatId = parseInt(item.dataset.chatId);
+                const salonId = parseInt(item.dataset.salonId);
+                const salonName = item.dataset.salonName;
+                window.activeChatManager.openChat(chatId, salonId, salonName);
+            });
+        });
         
         document.getElementById('chatTitle').textContent = `Customer Chats - ${this.currentSalonName}`;
         document.getElementById('chatInput').style.display = 'none';
