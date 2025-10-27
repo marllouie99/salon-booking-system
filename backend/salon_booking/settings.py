@@ -17,20 +17,33 @@ SECRET_KEY = config('SECRET_KEY', default='your-secret-key-here-change-in-produc
 DEBUG = config('DEBUG', default=True, cast=bool)
 
 # Parse ALLOWED_HOSTS from environment variable (comma-separated)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,web-production-e6265.up.railway.app').split(',')
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
 
 # Add Railway domain if deployed
 RAILWAY_STATIC_URL = config('RAILWAY_STATIC_URL', default='')
 if RAILWAY_STATIC_URL:
     ALLOWED_HOSTS.append(RAILWAY_STATIC_URL.replace('https://', '').replace('http://', ''))
 
-# CSRF Trusted Origins for Railway
+# Auto-detect Railway public domain
+RAILWAY_PUBLIC_DOMAIN = config('RAILWAY_PUBLIC_DOMAIN', default='')
+if RAILWAY_PUBLIC_DOMAIN:
+    ALLOWED_HOSTS.append(RAILWAY_PUBLIC_DOMAIN)
+
+# CSRF Trusted Origins
 CSRF_TRUSTED_ORIGINS = [
-    'https://web-production-e6265.up.railway.app',
-    'https://resplendent-swan-7ddbe1.netlify.app',  # Old Netlify (if still used)
     'http://localhost:8000',
     'http://127.0.0.1:8000',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
 ]
+
+# Add Railway public domain to CSRF trusted origins
+if RAILWAY_PUBLIC_DOMAIN:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{RAILWAY_PUBLIC_DOMAIN}')
+    
+# Add Railway static URL to CSRF trusted origins
+if RAILWAY_STATIC_URL:
+    CSRF_TRUSTED_ORIGINS.append(RAILWAY_STATIC_URL)
 
 # Add Vercel frontend URL to CSRF trusted origins if set
 FRONTEND_URL_CONFIG = config('FRONTEND_URL', default='http://localhost:3000')
