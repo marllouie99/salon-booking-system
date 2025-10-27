@@ -22,7 +22,9 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(','
 # Add Railway domain if deployed
 RAILWAY_STATIC_URL = config('RAILWAY_STATIC_URL', default='')
 if RAILWAY_STATIC_URL:
-    ALLOWED_HOSTS.append(RAILWAY_STATIC_URL.replace('https://', '').replace('http://', ''))
+    # Extract domain without scheme for ALLOWED_HOSTS
+    domain = RAILWAY_STATIC_URL.replace('https://', '').replace('http://', '')
+    ALLOWED_HOSTS.append(domain)
 
 # Auto-detect Railway public domain
 RAILWAY_PUBLIC_DOMAIN = config('RAILWAY_PUBLIC_DOMAIN', default='')
@@ -37,13 +39,21 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:3000',
 ]
 
-# Add Railway public domain to CSRF trusted origins
+# Add Railway public domain to CSRF trusted origins (with https://)
 if RAILWAY_PUBLIC_DOMAIN:
-    CSRF_TRUSTED_ORIGINS.append(f'https://{RAILWAY_PUBLIC_DOMAIN}')
+    # Ensure it has a scheme
+    if not RAILWAY_PUBLIC_DOMAIN.startswith(('http://', 'https://')):
+        CSRF_TRUSTED_ORIGINS.append(f'https://{RAILWAY_PUBLIC_DOMAIN}')
+    else:
+        CSRF_TRUSTED_ORIGINS.append(RAILWAY_PUBLIC_DOMAIN)
     
-# Add Railway static URL to CSRF trusted origins
+# Add Railway static URL to CSRF trusted origins (with https://)
 if RAILWAY_STATIC_URL:
-    CSRF_TRUSTED_ORIGINS.append(RAILWAY_STATIC_URL)
+    # Ensure it has a scheme
+    if not RAILWAY_STATIC_URL.startswith(('http://', 'https://')):
+        CSRF_TRUSTED_ORIGINS.append(f'https://{RAILWAY_STATIC_URL}')
+    else:
+        CSRF_TRUSTED_ORIGINS.append(RAILWAY_STATIC_URL)
 
 # Add Vercel frontend URL to CSRF trusted origins if set
 FRONTEND_URL_CONFIG = config('FRONTEND_URL', default='http://localhost:3000')
