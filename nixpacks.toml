@@ -1,8 +1,0 @@
-[phases.setup]
-nixPkgs = ["python312", "python312Packages.pip"]
-
-[phases.install]
-cmds = ["python -m pip install --upgrade pip && python -m pip install -r backend/requirements.txt"]
-
-[start]
-cmd = "cd backend && python manage.py migrate && gunicorn salon_booking.wsgi --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
