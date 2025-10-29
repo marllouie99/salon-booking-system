@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking Management - Admin Dashboard</title>
     <link rel="stylesheet" href="/admin-styles.css?v=1.1">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{% static \'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css\' %}" rel="stylesheet">
 </head>
 <body>
     <div class="admin-container">
@@ -99,6 +100,6 @@
         </main>
     </div>
 
-    <script src="/admin-script.js"></script>
+    <script src="{% static \'/admin-script.js\' %}"></script>
 </body>
 </html>

@@ -1,19 +1,20 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile - Salon Booking System</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{% static \'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css\' %}" rel="stylesheet">
     
     <!-- Shared Navbar CSS -->
-    <link rel="stylesheet" href="/components/navbar.css">
+    <link rel="stylesheet" href="{% static \'/components/navbar.css\' %}">
     
     <!-- Page-Specific CSS (load before modal styles to allow override) -->
-    <link rel="stylesheet" href="profile.css">
+    <link rel="stylesheet" href="{% static \'profile.css\' %}">
     
     <!-- Modal Styles (needed for salon application modal - load AFTER profile.css) -->
-    <link rel="stylesheet" href="/customer-home.css">
+    <link rel="stylesheet" href="{% static \'/customer-home.css\' %}">
 </head>
 <body>
     <!-- Load Navbar Component -->
@@ -286,6 +287,6 @@
         </div>
     </div>
 
-    <script src="profile.js"></script>
+    <script src="{% static \'profile.js\' %}"></script>
 </body>
 </html>

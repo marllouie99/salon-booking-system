@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,22 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Bookings - Salon Booking System</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✂️</text></svg>">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static \'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\' %}">
     
     <!-- Shared Navbar CSS -->
-    <link rel="stylesheet" href="/components/navbar.css">
+    <link rel="stylesheet" href="{% static \'/components/navbar.css\' %}">
     
     <!-- Page-Specific CSS -->
-    <link rel="stylesheet" href="/customer-home.css">
-    <link rel="stylesheet" href="/red-theme.css">
-    <link rel="stylesheet" href="/reviews.css">
-    <link rel="stylesheet" href="/my-bookings-new.css">
-    <link rel="stylesheet" href="/my-bookings-redesign.css">
+    <link rel="stylesheet" href="{% static \'/customer-home.css\' %}">
+    <link rel="stylesheet" href="{% static \'/red-theme.css\' %}">
+    <link rel="stylesheet" href="{% static \'/reviews.css\' %}">
+    <link rel="stylesheet" href="{% static \'/my-bookings-new.css\' %}">
+    <link rel="stylesheet" href="{% static \'/my-bookings-redesign.css\' %}">
     
     <!-- PayPal SDK -->
     <script src="https://www.paypal.com/sdk/js?client-id=ASJPu62UX5oVHi4eo_FWv9hJIniV6H_lbclcdqzXdk1DGZ5sEeU_Y3b9QBZF5U1OSttudcSc685CWJBX&currency=PHP&disable-funding=credit,card" async></script>
     <!-- API Configuration -->
-    <script src="config.js"></script>
+    <script src="{% static \'config.js\' %}"></script>
 </head>
 <body>
     <!-- Load Navbar Component -->
@@ -318,9 +319,9 @@
         </div>
     </div>
 
-    <script src="/shared-functions.js"></script>
-    <script src="/customer-home.js"></script>
-    <script src="/reviews.js"></script>
-    <script src="/my-bookings.js"></script>
+    <script src="{% static \'/shared-functions.js\' %}"></script>
+    <script src="{% static \'/customer-home.js\' %}"></script>
+    <script src="{% static \'/reviews.js\' %}"></script>
+    <script src="{% static \'/my-bookings.js\' %}"></script>
 </body>
 </html>
