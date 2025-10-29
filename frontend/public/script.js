@@ -16,7 +16,11 @@ function initializeGoogleSignIn() {
     if (typeof google !== 'undefined' && google.accounts) {
         google.accounts.id.initialize({
             client_id: GOOGLE_CLIENT_ID,
-            callback: handleGoogleSignIn
+            callback: handleGoogleSignIn,
+            // Add cross-origin configuration
+            ux_mode: 'popup',  // Use popup mode for better cross-origin support
+            auto_select: false,
+            cancel_on_tap_outside: true
         });
         
         google.accounts.id.renderButton(
@@ -25,7 +29,8 @@ function initializeGoogleSignIn() {
                 theme: 'outline',
                 size: 'large',
                 text: 'signin_with',
-                width: 350
+                width: 350,
+                type: 'standard'
             }
         );
     }
@@ -40,8 +45,11 @@ async function handleGoogleSignIn(response) {
         const res = await fetch(`${window.API_BASE_URL}/api/accounts/google-login/`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
+            credentials: 'include',  // Include credentials for CORS
+            mode: 'cors',  // Explicitly set CORS mode
             body: JSON.stringify({
                 token: credential
             })

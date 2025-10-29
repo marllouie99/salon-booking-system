@@ -37,6 +37,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8000',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'https://salon-booking-system-production-4fb1.up.railway.app',  # Railway frontend
+    'https://web-production-e6265.up.railway.app',  # Railway backend
 ]
 
 # Add Railway public domain to CSRF trusted origins (with https://)
@@ -88,6 +90,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    'salon_booking.middleware.SecurityHeadersMiddleware',  # Custom security headers for OAuth
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # For serving static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -253,6 +256,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://resplendent-swan-7ddbe1.netlify.app",  # Old Netlify frontend
     "https://tangerine-jalebi-f488be.netlify.app",  # Old Netlify frontend
     "https://salon-booking-system3.vercel.app",  # Vercel production URL
+    "https://salon-booking-system-production-4fb1.up.railway.app",  # Railway frontend
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -276,6 +280,10 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+
+# Security Headers - Configure Cross-Origin policies for Google OAuth
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None  # Allow OAuth popups to communicate
+# Alternative: SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
 
 # JWT Settings
 from datetime import timedelta
