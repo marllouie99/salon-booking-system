@@ -41,15 +41,12 @@ async function handleGoogleSignIn(response) {
     try {
         const credential = response.credential;
         
-        // Send to backend
+        // Send to backend - Use text/plain to avoid preflight
         const res = await fetch(`${window.API_BASE_URL}/api/accounts/google-login/`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Content-Type': 'text/plain'  // Use text/plain to avoid CORS preflight
             },
-            credentials: 'include',  // Include credentials for CORS
-            mode: 'cors',  // Explicitly set CORS mode
             body: JSON.stringify({
                 token: credential
             })

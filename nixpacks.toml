@@ -1,0 +1,17 @@
+[phases.setup]
+nixPkgs = ["python312", "postgresql_16.dev", "gcc"]
+
+[phases.install]
+cmds = [
+  "python -m venv --copies /opt/venv",
+  ". /opt/venv/bin/activate && pip install -r requirements.txt"
+]
+
+[phases.build]
+cmds = []
+
+[start]
+cmd = "cd backend && python manage.py migrate && gunicorn salon_booking.wsgi --bind 0.0.0.0:$PORT --workers 2 --timeout 120 --log-level debug --access-logfile - --error-logfile -"
+
+[variables]
+PYTHONUNBUFFERED = "1"
