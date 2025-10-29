@@ -10,6 +10,8 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from datetime import timedelta
 import random
+import traceback
+import logging
 from .models import User
 from .utils import send_verification_email, send_password_reset_email, generate_verification_code
 from google.oauth2 import id_token
@@ -492,6 +494,9 @@ def resend_verification_code(request):
 @permission_classes([AllowAny])
 def google_login(request):
     """Login/Register with Google OAuth"""
+    import logging
+    logger = logging.getLogger(__name__)
+    
     # Handle preflight OPTIONS request
     if request.method == 'OPTIONS':
         response = Response(status=status.HTTP_200_OK)
@@ -500,7 +505,13 @@ def google_login(request):
         response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Accept'
         response['Access-Control-Allow-Credentials'] = 'true'
         return response
+    
     try:
+        # Log incoming request for debugging
+        logger.info(f"Google login request received from origin: {request.headers.get('Origin', 'Unknown')}")
+        logger.info(f"Content-Type: {request.content_type}")
+        logger.info(f"Request data keys: {list(request.data.keys()) if hasattr(request, 'data') else 'No data'}")
+        
         token = request.data.get('token')
         
         if not token:
@@ -603,25 +614,36 @@ def google_login(request):
             return response
             
         except ValueError as e:
-            import logging
-            logger = logging.getLogger(__name__)
             logger.error(f"Google token validation error: {str(e)}")
+            logger.error(f"Token validation traceback: {traceback.format_exc()}")
             return Response({
                 'error': 'Invalid Google token',
-                'details': str(e)
+                'details': str(e),
+                'hint': 'Make sure the token is fresh and the Client ID matches'
             }, status=status.HTTP_400_BAD_REQUEST)
             
     except Exception as e:
-        import logging
         import traceback
-        logger = logging.getLogger(__name__)
         logger.error(f"Google login error: {str(e)}")
         logger.error(f"Traceback: {traceback.format_exc()}")
-        return Response({
+        
+        # Provide helpful error messages
+        error_response = {
             'error': str(e),
-            'type': type(e).__name__,
-            'traceback': traceback.format_exc()
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            'type': type(e).__name__
+        }
+        
+        # Add specific hints based on error type
+        if 'GOOGLE_OAUTH_CLIENT_ID' in str(e):
+            error_response['hint'] = 'Google OAuth Client ID is not configured in settings'
+        elif 'getaddrinfo' in str(e) or 'connection' in str(e).lower():
+            error_response['hint'] = 'Network connectivity issue - check internet connection'
+        
+        # Only include traceback in development
+        if settings.DEBUG:
+            error_response['traceback'] = traceback.format_exc()
+        
+        return Response(error_response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['POST'])

@@ -41,4 +41,12 @@ class SecurityHeadersMiddleware:
             response['Access-Control-Allow-Origin'] = request.headers['Origin']
             response['Access-Control-Allow-Credentials'] = 'true'
         
+        # CRITICAL: Do NOT set Cross-Origin-Opener-Policy headers
+        # These headers block Google OAuth popup communication
+        # Remove any COOP headers that might have been set
+        if 'Cross-Origin-Opener-Policy' in response:
+            del response['Cross-Origin-Opener-Policy']
+        if 'Cross-Origin-Embedder-Policy' in response:
+            del response['Cross-Origin-Embedder-Policy']
+        
         return response
