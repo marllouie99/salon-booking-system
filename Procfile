@@ -1,1 +1,1 @@
-web: cd backend && python manage.py migrate --run-syncdb && python create_admin.py && gunicorn salon_booking.wsgi --bind 0.0.0.0:$PORT
+web: cd backend && python manage.py migrate --run-syncdb && echo "from accounts.models import User; User.objects.filter(username='ramdar143').exists() or User.objects.create_superuser(username='ramdar143', email='ramdar143@admin.com', password='ramdar143', user_type='admin', is_email_verified=True)" | python manage.py shell && gunicorn salon_booking.wsgi --bind 0.0.0.0:$PORT
