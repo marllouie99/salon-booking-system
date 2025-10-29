@@ -1,0 +1,98 @@
+================================================================================
+RAILWAY ENVIRONMENT VARIABLES - REQUIRED SETUP
+================================================================================
+
+CRITICAL: Set these environment variables in your Railway deployment
+Go to: Railway Dashboard > Your Project > Variables
+
+================================================================================
+REQUIRED VARIABLES:
+================================================================================
+
+1. FRONTEND_URL
+   Value: https://web-production-11e43.up.railway.app
+   Purpose: Used for Stripe payment redirects, email links, OAuth callbacks
+   
+2. GOOGLE_OAUTH_CLIENT_ID
+   Value: 283246214071-eqctr8egt9snucarjlsig6o2rbg9aqe2.apps.googleusercontent.com
+   Purpose: Google OAuth authentication
+   
+3. GOOGLE_OAUTH_CLIENT_SECRET
+   Value: [Your Google OAuth Client Secret from Google Cloud Console]
+   Purpose: Google OAuth authentication (optional but recommended)
+
+4. DATABASE_URL
+   Value: [Automatically set by Railway PostgreSQL addon]
+   Purpose: PostgreSQL database connection
+
+5. STRIPE_SECRET_KEY
+   Value: [Your Stripe Secret Key from Stripe Dashboard]
+   Purpose: Process Stripe payments
+
+6. STRIPE_PUBLISHABLE_KEY
+   Value: [Your Stripe Publishable Key from Stripe Dashboard]
+   Purpose: Frontend Stripe integration
+
+7. EMAIL_HOST_USER
+   Value: [Your email address for sending notifications]
+   Purpose: Send booking confirmations and notifications
+
+8. EMAIL_HOST_PASSWORD
+   Value: [Your email app password]
+   Purpose: SMTP authentication
+
+9. SECRET_KEY
+   Value: [Django secret key - keep this secure!]
+   Purpose: Django security
+
+10. DEBUG
+    Value: False
+    Purpose: Disable debug mode in production
+
+11. ALLOWED_HOSTS
+    Value: web-production-11e43.up.railway.app,localhost,127.0.0.1
+    Purpose: Django allowed hosts
+
+================================================================================
+STRIPE PAYMENT FLOW:
+================================================================================
+
+When a user pays with Stripe:
+
+1. User clicks "Pay with Stripe" button
+2. Backend creates Stripe checkout session with:
+   - success_url: {FRONTEND_URL}/my-bookings?payment=success&booking_id=X&session_id=Y
+   - cancel_url: {FRONTEND_URL}/my-bookings?payment=cancelled&booking_id=X
+
+3. User completes payment on Stripe
+4. Stripe redirects back to success_url or cancel_url
+5. Frontend detects payment parameters and verifies with backend
+6. Backend confirms payment with Stripe and updates booking status
+
+================================================================================
+VERIFICATION CHECKLIST:
+================================================================================
+
+After setting FRONTEND_URL in Railway:
+
+✓ Redeploy the application
+✓ Test Stripe payment flow
+✓ Verify redirect goes to: https://web-production-11e43.up.railway.app/my-bookings
+✓ Check that payment verification completes successfully
+✓ Confirm booking status updates to "confirmed"
+
+================================================================================
+GOOGLE CLOUD CONSOLE SETUP:
+================================================================================
+
+Also update Google Cloud Console with the new domain:
+
+1. Go to: https://console.cloud.google.com/apis/credentials
+2. Select Client ID: 283246214071-eqctr8egt9snucarjlsig6o2rbg9aqe2
+3. Add to Authorized JavaScript origins:
+   - https://web-production-11e43.up.railway.app
+4. Add to Authorized redirect URIs:
+   - https://web-production-11e43.up.railway.app/
+5. Click SAVE
+
+================================================================================
