@@ -90,7 +90,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'salon_booking.middleware.SecurityHeadersMiddleware',  # MUST be first to handle OPTIONS
-    'corsheaders.middleware.CorsMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',  # Temporarily disabled - using custom middleware
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # For serving static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -227,7 +227,10 @@ else:
 # This helps request.build_absolute_uri() generate https:// URLs
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = False if DEBUG else True
+SECURE_SSL_REDIRECT = False  # Disabled for CORS testing
+
+# Disable security middleware COOP header (conflicts with our custom one)
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -280,10 +283,6 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
-
-# Security Headers - Configure Cross-Origin policies for Google OAuth
-SECURE_CROSS_ORIGIN_OPENER_POLICY = None  # Allow OAuth popups to communicate
-# Alternative: SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
 
 # JWT Settings
 from datetime import timedelta
