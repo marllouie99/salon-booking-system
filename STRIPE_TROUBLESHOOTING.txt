@@ -1,0 +1,169 @@
+================================================================================
+STRIPE PAYMENT TROUBLESHOOTING GUIDE
+================================================================================
+
+ISSUE: After Stripe payment, booking shows "PENDING" and "PAYMENT PENDING"
+       instead of "CONFIRMED" and "PAID"
+
+================================================================================
+POSSIBLE CAUSES & SOLUTIONS:
+================================================================================
+
+1. USER CANCELLED THE PAYMENT
+------------------------------
+Symptom: Booking stays in "PENDING" status with "PAYMENT PENDING"
+Cause: User clicked "Cancel" or closed the Stripe checkout page
+
+Solution:
+- This is expected behavior
+- User can click "Pay Now" button again to retry payment
+- Booking will remain pending until payment is completed
+
+How to verify:
+- Check browser console for: [STRIPE RETURN] Payment: cancelled
+- User should see message: "Payment cancelled. Your booking is still pending."
+
+
+2. STRIPE WEBHOOK NOT CONFIGURED
+---------------------------------
+Symptom: Payment completes on Stripe but booking doesn't update
+Cause: Stripe webhooks not set up to notify your backend
+
+Solution:
+a) Go to Stripe Dashboard: https://dashboard.stripe.com/webhooks
+b) Click "Add endpoint"
+c) Enter URL: https://web-production-e6265.up.railway.app/api/bookings/stripe/webhook/
+d) Select events to listen for:
+   - checkout.session.completed
+   - checkout.session.expired
+   - payment_intent.payment_failed
+e) Copy the "Signing secret" (starts with whsec_)
+f) Add to Railway environment variables:
+   STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
+g) Redeploy your application
+
+Note: Webhooks are the PRIMARY way payments are confirmed. The frontend
+verification is a FALLBACK if webhooks fail.
+
+
+3. FRONTEND VERIFICATION FAILING
+---------------------------------
+Symptom: Payment completes but verification fails
+Cause: API error, authentication issue, or network problem
+
+How to diagnose:
+a) Open browser console (F12)
+b) Complete a Stripe payment
+c) Look for these log messages:
+   [STRIPE RETURN] Payment: success, Booking ID: X, Session ID: Y
+   [STRIPE VERIFY] Calling verification endpoint...
+   [STRIPE VERIFY] Response status: 200
+   [STRIPE VERIFY] Response data: {...}
+
+If you see errors:
+- 401 Unauthorized: Token expired, user needs to login again
+- 404 Not Found: Booking ID mismatch
+- 500 Server Error: Check backend logs
+
+Solution:
+- Ensure user is logged in
+- Check FRONTEND_URL is set correctly in Railway
+- Verify STRIPE_SECRET_KEY is set in Railway
+
+
+4. STRIPE API KEY NOT CONFIGURED
+---------------------------------
+Symptom: Error creating checkout session or verifying payment
+Cause: Missing or invalid Stripe API keys
+
+Solution:
+Set these in Railway environment variables:
+- STRIPE_SECRET_KEY=sk_test_xxxxx (or sk_live_xxxxx for production)
+- STRIPE_PUBLISHABLE_KEY=pk_test_xxxxx (or pk_live_xxxxx)
+- STRIPE_WEBHOOK_SECRET=whsec_xxxxx
+
+Get keys from: https://dashboard.stripe.com/apikeys
+
+
+5. FRONTEND_URL NOT SET CORRECTLY
+----------------------------------
+Symptom: Stripe redirects to wrong URL after payment
+Cause: FRONTEND_URL environment variable not set
+
+Solution:
+In Railway, set:
+FRONTEND_URL=https://web-production-11e43.up.railway.app
+
+This ensures Stripe redirects back to the correct URL with payment status.
+
+================================================================================
+TESTING CHECKLIST:
+================================================================================
+
+Test the complete flow:
+
+1. ✓ Create a booking
+2. ✓ Click "Pay with Stripe"
+3. ✓ Complete payment with test card: 4242 4242 4242 4242
+4. ✓ Verify redirect to: /my-bookings?payment=success&booking_id=X&session_id=Y
+5. ✓ Check console logs for verification process
+6. ✓ Confirm booking status changes to "CONFIRMED"
+7. ✓ Confirm payment status changes to "PAID"
+8. ✓ Verify email confirmation is sent
+
+Test cancellation:
+
+1. ✓ Create a booking
+2. ✓ Click "Pay with Stripe"
+3. ✓ Click "Cancel" or close the Stripe page
+4. ✓ Verify redirect to: /my-bookings?payment=cancelled&booking_id=X
+5. ✓ Check booking remains "PENDING"
+6. ✓ Verify "Pay Now" button is still available
+
+================================================================================
+STRIPE TEST CARDS:
+================================================================================
+
+Success: 4242 4242 4242 4242
+Decline: 4000 0000 0000 0002
+Insufficient funds: 4000 0000 0000 9995
+Expired card: 4000 0000 0000 0069
+
+Use any future expiry date and any 3-digit CVC.
+
+================================================================================
+COMPARISON WITH PAYPAL:
+================================================================================
+
+PayPal Flow (Working):
+1. User clicks "Pay with PayPal"
+2. Redirects to PayPal
+3. User completes payment
+4. PayPal sends IPN (Instant Payment Notification) to backend
+5. Backend updates booking to "CONFIRMED" and "PAID"
+6. User redirects back to success page
+
+Stripe Flow (Should work the same):
+1. User clicks "Pay with Stripe"
+2. Redirects to Stripe Checkout
+3. User completes payment
+4. Stripe sends webhook to backend (if configured)
+5. Backend updates booking to "CONFIRMED" and "PAID"
+6. User redirects back with session_id
+7. Frontend verifies payment (fallback if webhook missed)
+
+Key difference: Stripe requires webhook configuration for automatic updates.
+PayPal IPN works automatically.
+
+================================================================================
+NEXT STEPS:
+================================================================================
+
+1. Deploy the updated code (with logging)
+2. Configure Stripe webhook (most important!)
+3. Test a payment and check console logs
+4. Share the console logs if issue persists
+
+The new logging will show exactly where the process fails.
+
+================================================================================
