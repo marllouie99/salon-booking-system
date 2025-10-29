@@ -11,7 +11,7 @@ cmds = [
 cmds = []
 
 [start]
-cmd = "cd backend && python manage.py migrate && gunicorn salon_booking.wsgi --config gunicorn.conf.py"
+cmd = "cd backend && python manage.py migrate && gunicorn salon_booking.wsgi --bind 0.0.0.0:$PORT --workers 2 --timeout 120 --config gunicorn.conf.py"
 
 [variables]
 PYTHONUNBUFFERED = "1"

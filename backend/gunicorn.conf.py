@@ -2,6 +2,7 @@
 Gunicorn configuration with CORS headers injection
 """
 import logging
+import os
 
 # Logging
 loglevel = 'debug'
@@ -9,8 +10,7 @@ accesslog = '-'
 errorlog = '-'
 access_log_format = '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
 
-# Server mechanics
-bind = '0.0.0.0:8080'
+# Server mechanics - bind will be overridden by command line
 workers = 2
 worker_class = 'sync'
 timeout = 120
