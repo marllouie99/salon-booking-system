@@ -221,14 +221,14 @@
     <div id="bookingModalContainer"></div>
 
     <!-- Scripts -->
-    <script src="/shared-functions.js?v=20251019162800"></script>
-    <script src="customer-home.js?v=20251019162800"></script>
-    <script src="chat.js?v=20251019162800"></script>
-    <script src="booking.js?v=20251019162800"></script>
+    <script src="/static/shared-functions.js?v=20251019162800"></script>
+    <script src="/static/customer-home.js?v=20251019162800"></script>
+    <script src="/static/chat.js?v=20251019162800"></script>
+    <script src="/static/booking.js?v=20251019162800"></script>
     
     <script>
         // Load booking modal HTML
-        fetch('/booking-modal.html')
+        fetch('/static/booking-modal.html')
             .then(response => response.text())
             .then(html => {
                 document.getElementById('bookingModalContainer').innerHTML = html;

@@ -643,14 +643,14 @@ function logout() {
 function loadSalonApplicationModal() {
     // Add cache-busting parameter to force fresh load
     const cacheBuster = '?v=' + Date.now();
-    console.log('Loading salon modal from:', '/components/salon-application-modal.html' + cacheBuster);
+    console.log('Loading salon modal from:', '/static/components/salon-application-modal.html' + cacheBuster);
 
     // Ensure shared modal stylesheet is present once across all pages
     if (!document.getElementById('salonModalStyles')) {
         const link = document.createElement('link');
         link.id = 'salonModalStyles';
         link.rel = 'stylesheet';
-        link.href = '/components/salon-application-modal.css' + cacheBuster;
+        link.href = '/static/components/salon-application-modal.css' + cacheBuster;
         document.head.appendChild(link);
     }
 
@@ -658,7 +658,7 @@ function loadSalonApplicationModal() {
     loadScriptsSequentially()
         .then(() => {
             // Load modal HTML after scripts are ready
-            return fetch('/components/salon-application-modal.html' + cacheBuster);
+            return fetch('/static/components/salon-application-modal.html' + cacheBuster);
         })
         .then(response => {
             console.log('Modal fetch response:', response.status);
@@ -702,7 +702,7 @@ function loadScriptsSequentially() {
         if (!document.getElementById('philippineLocationsScript')) {
             const locationsScript = document.createElement('script');
             locationsScript.id = 'philippineLocationsScript';
-            locationsScript.src = '/data/philippines-locations.js';
+            locationsScript.src = '/static/data/philippines-locations.js';
             
             locationsScript.onload = () => {
                 console.log('✓ Philippine locations data loaded');
@@ -711,7 +711,7 @@ function loadScriptsSequentially() {
                 if (!document.getElementById('searchableSelectScript')) {
                     const searchableScript = document.createElement('script');
                     searchableScript.id = 'searchableSelectScript';
-                    searchableScript.src = '/components/searchable-select.js';
+                    searchableScript.src = '/static/components/searchable-select.js';
                     
                     searchableScript.onload = () => {
                         console.log('✓ Searchable select component loaded');
