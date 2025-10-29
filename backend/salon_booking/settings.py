@@ -89,8 +89,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'salon_booking.middleware.SecurityHeadersMiddleware',  # MUST be first to handle OPTIONS
-    # 'corsheaders.middleware.CorsMiddleware',  # Temporarily disabled - using custom middleware
+    'corsheaders.middleware.CorsMiddleware',  # Re-enabled - MUST be first
+    'salon_booking.middleware.SecurityHeadersMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # For serving static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -250,20 +250,9 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20
 }
 
-# CORS settings
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:5500",
-    "http://127.0.0.1:5500",
-    "https://resplendent-swan-7ddbe1.netlify.app",  # Old Netlify frontend
-    "https://tangerine-jalebi-f488be.netlify.app",  # Old Netlify frontend
-    "https://salon-booking-system3.vercel.app",  # Vercel production URL
-    "https://salon-booking-system-production-4fb1.up.railway.app",  # Railway frontend
-]
-
+# CORS settings - Simplified and explicit
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for now
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = True  # Temporarily enabled for testing
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
@@ -283,6 +272,7 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+CORS_PREFLIGHT_MAX_AGE = 86400  # Cache preflight for 24 hours
 
 # JWT Settings
 from datetime import timedelta
