@@ -319,12 +319,12 @@
 <body>
     <!-- Load Navbar Component -->
     <script>
-        fetch('/components/navbar.html')
+        fetch('/static/components/navbar.html')
             .then(response => response.text())
             .then(html => {
                 document.body.insertAdjacentHTML('afterbegin', html);
                 const script = document.createElement('script');
-                script.src = '/components/navbar.js';
+                script.src = '/static/components/navbar.js';
                 document.head.appendChild(script);
             });
     </script>
