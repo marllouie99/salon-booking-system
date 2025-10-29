@@ -603,13 +603,24 @@ def google_login(request):
             return response
             
         except ValueError as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Google token validation error: {str(e)}")
             return Response({
-                'error': 'Invalid Google token'
+                'error': 'Invalid Google token',
+                'details': str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
             
     except Exception as e:
+        import logging
+        import traceback
+        logger = logging.getLogger(__name__)
+        logger.error(f"Google login error: {str(e)}")
+        logger.error(f"Traceback: {traceback.format_exc()}")
         return Response({
-            'error': str(e)
+            'error': str(e),
+            'type': type(e).__name__,
+            'traceback': traceback.format_exc()
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

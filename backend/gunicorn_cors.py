@@ -13,5 +13,5 @@ def post_request(worker, req, environ, resp):
     resp.headers.append(('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS'))
     resp.headers.append(('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-CSRFToken'))
     resp.headers.append(('Access-Control-Max-Age', '86400'))
-    resp.headers.append(('Cross-Origin-Opener-Policy', 'same-origin-allow-popups'))
-    resp.headers.append(('Cross-Origin-Embedder-Policy', 'unsafe-none'))
+    # REMOVED: Cross-Origin-Opener-Policy - blocks Google OAuth postMessage
+    # REMOVED: Cross-Origin-Embedder-Policy - not needed for same-origin deployment
