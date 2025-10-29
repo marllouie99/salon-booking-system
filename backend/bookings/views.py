@@ -2153,40 +2153,55 @@ def create_stripe_checkout_session(request, booking_id):
 @permission_classes([AllowAny])  # Webhook doesn't use authentication
 def stripe_webhook(request):
     """Handle Stripe webhook events"""
+    import logging
+    logger = logging.getLogger(__name__)
+    
     try:
         import stripe
         from django.conf import settings
         from django.http import HttpResponse
         
+        logger.info("[STRIPE WEBHOOK] Received webhook request")
+        
         # Configure Stripe
         stripe.api_key = settings.STRIPE_SECRET_KEY
         webhook_secret = settings.STRIPE_WEBHOOK_SECRET
         
+        logger.info(f"[STRIPE WEBHOOK] Webhook secret configured: {bool(webhook_secret)}")
+        
         payload = request.body
         sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+        
+        logger.info(f"[STRIPE WEBHOOK] Signature header present: {bool(sig_header)}")
         
         try:
             # Verify webhook signature
             event = stripe.Webhook.construct_event(
                 payload, sig_header, webhook_secret
             )
+            logger.info(f"[STRIPE WEBHOOK] Event verified: {event['type']}")
         except ValueError as e:
             # Invalid payload
+            logger.error(f"[STRIPE WEBHOOK] Invalid payload: {str(e)}")
             return HttpResponse(status=400)
         except stripe.error.SignatureVerificationError as e:
             # Invalid signature
+            logger.error(f"[STRIPE WEBHOOK] Invalid signature: {str(e)}")
             return HttpResponse(status=400)
         
         # Handle the event
         if event['type'] == 'checkout.session.completed':
             session = event['data']['object']
+            logger.info(f"[STRIPE WEBHOOK] Processing checkout.session.completed")
             
             # Get booking ID from metadata
             booking_id = session.get('client_reference_id') or session['metadata'].get('booking_id')
+            logger.info(f"[STRIPE WEBHOOK] Booking ID from session: {booking_id}")
             
             if booking_id:
                 try:
                     booking = Booking.objects.get(id=booking_id)
+                    logger.info(f"[STRIPE WEBHOOK] Found booking #{booking.id}, current status: {booking.status}, payment_status: {booking.payment_status}")
                     
                     # Update booking payment status and confirm booking
                     booking.payment_status = 'completed'
@@ -2194,6 +2209,8 @@ def stripe_webhook(request):
                     booking.payment_id = session['payment_intent']
                     booking.payment_method = 'stripe'
                     booking.save()
+                    
+                    logger.info(f"[STRIPE WEBHOOK] ✅ Booking #{booking.id} updated to CONFIRMED and PAID")
                     
                     # Log booking confirmation
                     log_booking_activity(
@@ -2227,7 +2244,7 @@ def stripe_webhook(request):
                         })
                         transaction.save()
                         
-                        print(f"[STRIPE] Payment completed for booking #{booking.id}")
+                        logger.info(f"[STRIPE WEBHOOK] Transaction updated to completed")
                         
                     except Transaction.DoesNotExist:
                         # Create transaction if doesn't exist
