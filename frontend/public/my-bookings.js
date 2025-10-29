@@ -9,11 +9,18 @@ let currentFilter = 'all';
 
 // Load data on page load
 document.addEventListener('DOMContentLoaded', function() {
-    checkAuth();
+    // Check if returning from payment - skip immediate auth check
+    const urlParams = new URLSearchParams(window.location.search);
+    const isPaymentReturn = urlParams.has('payment') || urlParams.has('session_id');
+    
+    if (!isPaymentReturn) {
+        checkAuth();
+    }
+    
     loadUserData();
     loadMyBookings();
     
-    // Handle Stripe payment return
+    // Handle Stripe payment return (this will handle auth internally)
     handleStripePaymentReturn();
 });
 
