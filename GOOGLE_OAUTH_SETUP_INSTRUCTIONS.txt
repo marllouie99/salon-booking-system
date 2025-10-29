@@ -1,0 +1,84 @@
+================================================================================
+GOOGLE OAUTH CONFIGURATION - REQUIRED STEPS
+================================================================================
+
+PROBLEM:
+--------
+Error: "The given origin is not allowed for the given client ID"
+
+This means your Google OAuth Client ID is not configured to accept requests 
+from your current website origin.
+
+SOLUTION - Configure Google Cloud Console:
+-------------------------------------------
+
+1. Go to: https://console.cloud.google.com/apis/credentials
+
+2. Find and click on your OAuth 2.0 Client ID:
+   Client ID: 283246214071-eqctr8egt9snucarjlsig6o2rbg9aqe2.apps.googleusercontent.com
+
+3. In the "Authorized JavaScript origins" section, ADD these URLs:
+   
+   For Local Development:
+   ✓ http://localhost:3000
+   ✓ http://127.0.0.1:3000
+   
+   For Production (Railway):
+   ✓ https://web-production-11e43.up.railway.app
+   
+   IMPORTANT: Do NOT include trailing slashes or paths!
+
+4. In the "Authorized redirect URIs" section, ADD these URLs:
+   
+   For Local Development:
+   ✓ http://localhost:3000/
+   ✓ http://127.0.0.1:3000/
+   
+   For Production (Railway):
+   ✓ https://web-production-11e43.up.railway.app/
+   ✓ https://web-production-11e43.up.railway.app/api/accounts/google-login/
+
+5. Click "SAVE" at the bottom of the page
+
+6. Wait 5-10 minutes for Google's changes to propagate
+
+7. Clear your browser cache and try again
+
+
+VERIFICATION:
+-------------
+After making these changes, you should see:
+- ✓ No more "origin not allowed" errors
+- ✓ Google Sign-In button works properly
+- ✓ Successful authentication and redirect
+
+CURRENT STATUS:
+---------------
+Based on the screenshots you provided, your Google Console currently has:
+- Multiple localhost and Railway URLs already added
+- But the specific production URL might be missing or incorrect
+
+Double-check that:
+✓ https://web-production-11e43.up.railway.app is in Authorized JavaScript origins
+✓ No typos in the URL
+✓ No extra spaces or characters
+✓ Changes have been saved
+
+================================================================================
+ADDITIONAL TROUBLESHOOTING
+================================================================================
+
+If you still get 500 errors after fixing the origin issue:
+
+1. Check backend logs on Railway for detailed error messages
+2. Verify GOOGLE_OAUTH_CLIENT_ID is set in Railway environment variables
+3. Ensure the Client ID in frontend matches the one in backend .env
+4. Restart your Railway deployment after making changes
+
+Need help? The backend now has detailed logging that will show:
+- Request origin
+- Content-Type
+- Token validation errors
+- Network connectivity issues
+
+================================================================================
