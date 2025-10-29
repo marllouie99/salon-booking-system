@@ -37,10 +37,9 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8000',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-    'https://salon-booking-system-production-4fb1.up.railway.app',  # Railway frontend
-    'https://web-production-e6265.up.railway.app',  # Railway backend
-    'https://salon-booking-system3.vercel.app',  # Vercel frontend
-    'https://web-production-11e43.up.railway.app',  # Alternative Railway backend
+    'https://web-production-11e43.up.railway.app',  # Railway frontend/backend (current)
+    'https://web-production-e6265.up.railway.app',  # Railway backend (old)
+    'https://salon-booking-system-production-4fb1.up.railway.app',  # Railway (old)
 ]
 
 # Add Railway public domain to CSRF trusted origins (with https://)
