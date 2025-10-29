@@ -89,8 +89,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'salon_booking.middleware.SecurityHeadersMiddleware',  # MUST be first to handle OPTIONS
     'corsheaders.middleware.CorsMiddleware',
-    'salon_booking.middleware.SecurityHeadersMiddleware',  # Custom security headers for OAuth
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # For serving static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
