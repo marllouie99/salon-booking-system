@@ -1,3 +1,4 @@
 # Force Railway to rebuild and install new dependencies
 # Created: 2025-10-19
+# Updated: 2025-10-29 - Trigger deployment to create super admin
 # This file forces Railway to bypass cache and install sib-api-v3-sdk
