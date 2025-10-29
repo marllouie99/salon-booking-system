@@ -2,6 +2,9 @@
 Custom middleware for handling security headers and CORS
 """
 from django.http import HttpResponse
+import logging
+
+logger = logging.getLogger(__name__)
 
 class SecurityHeadersMiddleware:
     """
@@ -9,12 +12,19 @@ class SecurityHeadersMiddleware:
     """
     def __init__(self, get_response):
         self.get_response = get_response
+        logger.info("SecurityHeadersMiddleware initialized")
 
     def __call__(self, request):
+        logger.info(f"SecurityHeadersMiddleware called: {request.method} {request.path}")
+        
         # Handle OPTIONS (preflight) requests immediately
         if request.method == 'OPTIONS':
+            logger.info(f"Handling OPTIONS preflight for {request.path}")
             response = HttpResponse()
-            response['Access-Control-Allow-Origin'] = request.headers.get('Origin', '*')
+            origin = request.headers.get('Origin', '*')
+            logger.info(f"Origin: {origin}")
+            
+            response['Access-Control-Allow-Origin'] = origin
             response['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
             response['Access-Control-Allow-Headers'] = 'accept, accept-encoding, authorization, content-type, dnt, origin, user-agent, x-csrftoken, x-requested-with'
             response['Access-Control-Allow-Credentials'] = 'true'
@@ -22,6 +32,7 @@ class SecurityHeadersMiddleware:
             response['Cross-Origin-Opener-Policy'] = 'same-origin-allow-popups'
             response['Cross-Origin-Embedder-Policy'] = 'unsafe-none'
             response.status_code = 200
+            logger.info("Returning OPTIONS response with CORS headers")
             return response
         
         # Process normal requests
