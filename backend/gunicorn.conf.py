@@ -28,15 +28,13 @@ def post_request(worker, req, environ, resp):
     """Add CORS headers to every response"""
     origin = environ.get('HTTP_ORIGIN', '*')
     
-    # Add CORS headers to response
+    # Add CORS headers to response (no COOP since same-origin now)
     cors_headers = [
         ('Access-Control-Allow-Origin', origin),
         ('Access-Control-Allow-Credentials', 'true'),
         ('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS'),
         ('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-CSRFToken'),
         ('Access-Control-Max-Age', '86400'),
-        ('Cross-Origin-Opener-Policy', 'same-origin-allow-popups'),
-        ('Cross-Origin-Embedder-Policy', 'unsafe-none'),
     ]
     
     for header, value in cors_headers:
