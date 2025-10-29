@@ -32,6 +32,7 @@ urlpatterns = [
     path('customer-home.html', TemplateView.as_view(template_name='customer-home.html'), name='customer_home'),
     path('salon-owner-dashboard.html', TemplateView.as_view(template_name='salon-owner-dashboard.html'), name='salon_dashboard'),
     path('my-bookings.html', TemplateView.as_view(template_name='my-bookings.html'), name='my_bookings'),
+    path('my-bookings', RedirectView.as_view(url='/my-bookings.html', permanent=False), name='my_bookings_redirect'),
     path('profile.html', TemplateView.as_view(template_name='profile.html'), name='profile'),
     path('salon-application-status.html', TemplateView.as_view(template_name='salon-application-status.html'), name='salon_application'),
     path('admin-users.html', TemplateView.as_view(template_name='admin-users.html'), name='admin_users'),
