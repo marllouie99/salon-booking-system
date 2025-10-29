@@ -1,0 +1,945 @@
+/* Modern Redesigned Booking Card Styles */
+
+/* Bookings Container */
+.bookings-container {
+    display: grid;
+    gap: 2rem;
+}
+
+/* Filter Tabs Redesign */
+.filter-tabs {
+    display: flex;
+    gap: 0.75rem;
+    background: linear-gradient(145deg, rgba(30, 30, 30, 0.9), rgba(20, 20, 20, 0.95));
+    backdrop-filter: blur(20px);
+    padding: 1.25rem;
+    border-radius: 20px;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+    border: 1px solid rgba(220, 53, 69, 0.15);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.filter-tab {
+    padding: 0.85rem 1.75rem;
+    border: none;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.6);
+    border-radius: 14px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.9rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.filter-tab:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--white);
+    transform: translateY(-3px);
+    border-color: rgba(220, 53, 69, 0.3);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.filter-tab.active {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.5);
+    border: 1px solid rgba(220, 53, 69, 0.6);
+    transform: translateY(-3px);
+}
+
+.filter-tab i {
+    font-size: 1.1rem;
+}
+
+.booking-card {
+    background: linear-gradient(145deg, rgba(30, 30, 30, 0.9), rgba(20, 20, 20, 0.95));
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 0;
+    border: 1px solid rgba(220, 53, 69, 0.15);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.booking-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    transition: height 0.3s ease;
+}
+
+.booking-card:hover {
+    border-color: rgba(220, 53, 69, 0.5);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(220, 53, 69, 0.3);
+}
+
+.booking-card:hover::before {
+    height: 8px;
+}
+
+/* Override and hide any conflicting old styles */
+.booking-card > .booking-icon,
+.booking-card > .booking-details,
+.booking-card > .booking-actions {
+    display: none !important;
+}
+
+.booking-card .booking-header,
+.booking-card .booking-service,
+.booking-card .booking-info-grid {
+    display: none !important;
+}
+
+/* Ensure our new structure is visible */
+.booking-card .booking-card-header,
+.booking-card .booking-card-body,
+.booking-card .booking-card-actions {
+    display: flex !important;
+}
+
+.booking-card-body .booking-details-grid {
+    display: grid !important;
+}
+
+/* Card Header */
+.booking-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.75rem 2rem 1.25rem;
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.08), rgba(220, 53, 69, 0.02));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.salon-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.salon-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3);
+    transition: all 0.3s ease;
+}
+
+.booking-card:hover .salon-icon {
+    transform: rotate(10deg) scale(1.1);
+    box-shadow: 0 12px 30px rgba(220, 53, 69, 0.5);
+}
+
+.salon-name {
+    color: var(--white);
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem;
+    letter-spacing: -0.02em;
+}
+
+.booking-id-text {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+    margin: 0;
+    font-weight: 500;
+}
+
+.booking-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.badge-pending {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+}
+
+.badge-confirmed {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.badge-completed {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+}
+
+.badge-cancelled {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+.payment-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.payment-completed {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.payment-pending {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: white;
+}
+
+.payment-refunded {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+}
+
+.payment-failed {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+/* Card Body */
+.booking-card-body {
+    padding: 1.75rem 2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.service-info {
+    display: flex !important;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.05));
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+.service-info i {
+    color: #dc3545;
+    font-size: 1.3rem;
+}
+
+.service-name {
+    color: var(--white);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.booking-details-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+    .booking-details-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.detail-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.detail-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(220, 53, 69, 0.3);
+    transform: translateY(-2px);
+}
+
+.detail-item i {
+    color: #dc3545;
+    font-size: 1.2rem;
+    margin-top: 0.1rem;
+}
+
+.detail-item > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.detail-label {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.detail-value {
+    color: var(--white);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.review-display {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.08));
+    border-radius: 14px;
+    margin-top: 1.25rem;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.review-display .review-stars {
+    color: #fbbf24;
+    font-size: 1.3rem;
+    letter-spacing: 0.15rem;
+}
+
+.review-display .review-label {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* Card Actions */
+.booking-card-actions {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1.5rem 2rem 1.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.2);
+    flex-wrap: wrap;
+}
+
+.btn-action {
+    flex: 1;
+    min-width: 140px;
+    padding: 0.85rem 1.25rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.btn-action i {
+    font-size: 1rem;
+}
+
+.btn-pay {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.btn-pay:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+}
+
+.btn-invoice {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: white;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+}
+
+.btn-invoice:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+}
+
+.btn-calendar {
+    background: linear-gradient(135deg, #14b8a6, #0d9488);
+    color: white;
+    box-shadow: 0 4px 15px rgba(20, 184, 166, 0.4);
+}
+
+.btn-calendar:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(20, 184, 166, 0.5);
+}
+
+.btn-review {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: white;
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+}
+
+.btn-review:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(251, 191, 36, 0.5);
+}
+
+.btn-details {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-details:hover {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.8), rgba(200, 35, 51, 0.9));
+    border-color: rgba(220, 53, 69, 0.5);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+}
+
+/* Invoice Modal Styling */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    align-items: center;
+    justify-content: center;
+}
+
+.invoice-content {
+    max-width: 900px !important;
+    background: linear-gradient(145deg, #ffffff, #f8f9fa);
+    color: #000;
+    border-radius: 24px;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(220, 53, 69, 0.1);
+    animation: modalFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modal-close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    color: #94a3b8;
+    font-size: 32px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s;
+    background: transparent;
+    border: none;
+    line-height: 1;
+    z-index: 10;
+}
+
+.modal-close:hover {
+    color: #dc3545;
+    background: rgba(220, 53, 69, 0.1);
+    transform: rotate(90deg);
+}
+
+#invoice-print-area {
+    padding: 2.5rem;
+}
+
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 2.5rem;
+    border-bottom: 3px solid #dc3545;
+    padding-bottom: 1.5rem;
+}
+
+.invoice-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.invoice-logo i {
+    font-size: 2.5rem;
+    color: #dc3545;
+}
+
+.invoice-logo h1 {
+    font-size: 2.2rem;
+    color: #dc3545;
+    margin: 0;
+    font-weight: 800;
+}
+
+.invoice-title {
+    text-align: right;
+}
+
+.invoice-title h2 {
+    font-size: 2.8rem;
+    color: #1a202c;
+    margin: 0 0 0.5rem 0;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+}
+
+.invoice-number, .invoice-date {
+    color: #64748b;
+    margin: 0.35rem 0;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.invoice-parties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    margin: 2.5rem 0;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    border-radius: 16px;
+}
+
+.invoice-section h3 {
+    color: #dc3545;
+    margin-bottom: 0.75rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.invoice-section p {
+    margin: 0.35rem 0;
+    color: #475569;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.invoice-table {
+    width: 100%;
+    margin: 2.5rem 0;
+    border-collapse: collapse;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.invoice-table thead {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+.invoice-table th {
+    padding: 1rem 1.25rem;
+    text-align: left;
+    color: white;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.invoice-table td {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e2e8f0;
+    color: #475569;
+    font-size: 1rem;
+}
+
+.invoice-table tbody tr {
+    background: white;
+    transition: background 0.2s;
+}
+
+.invoice-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.invoice-table tfoot td {
+    border-top: 2px solid #dc3545;
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.total-row td {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #dc3545;
+    padding: 1.25rem !important;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.invoice-payment-info {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    padding: 2rem;
+    border-radius: 16px;
+    margin: 2.5rem 0;
+    border: 1px solid rgba(220, 53, 69, 0.1);
+}
+
+.invoice-payment-info h3 {
+    color: #dc3545;
+    margin-bottom: 1.25rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.invoice-payment-info p {
+    margin: 0.75rem 0;
+    color: #475569;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.invoice-payment-info strong {
+    color: #1a202c;
+    font-weight: 700;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.35rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.invoice-footer {
+    text-align: center;
+    margin-top: 3.5rem;
+    padding-top: 2.5rem;
+    border-top: 2px solid #e2e8f0;
+    color: #64748b;
+}
+
+.invoice-footer p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+}
+
+.invoice-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.25rem;
+    padding: 1.75rem 2rem;
+    border-top: 2px solid #e2e8f0;
+    background: linear-gradient(135deg, #f8f9fa, #ffffff);
+}
+
+.btn-print, .btn-download {
+    padding: 0.95rem 2rem;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.btn-print {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+
+.btn-print:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(220, 53, 69, 0.5);
+}
+
+.btn-download {
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+    color: white;
+    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+}
+
+.btn-download:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(108, 117, 125, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .booking-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1.5rem 1.25rem 1rem;
+    }
+    
+    .booking-badges {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .booking-details-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .booking-card-body {
+        padding: 1.5rem 1.25rem;
+    }
+    
+    .booking-card-actions {
+        flex-direction: column;
+        padding: 1.25rem;
+    }
+    
+    .btn-action {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .salon-name {
+        font-size: 1.15rem;
+    }
+    
+    .invoice-parties {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .invoice-header {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .invoice-title {
+        text-align: left;
+    }
+    
+    #invoice-print-area {
+        padding: 1.5rem;
+    }
+    
+    .invoice-actions {
+        flex-direction: column;
+    }
+    
+    .btn-print, .btn-download {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Print Styles */
+@media print {
+    /* Hide everything except the invoice */
+    body > *:not(#invoice-modal) {
+        display: none !important;
+    }
+    
+    .navbar, .header, .container, .bookings-container, 
+    .filters, .user-info, .chat-button, .modal-close, 
+    .invoice-actions, .booking-card, .filter-buttons,
+    #review-modal, #payment-modal {
+        display: none !important;
+    }
+    
+    /* Show only invoice modal */
+    #invoice-modal {
+        display: block !important;
+        position: static !important;
+        background: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        backdrop-filter: none !important;
+    }
+    
+    .invoice-content {
+        max-width: 100% !important;
+        box-shadow: none !important;
+        border: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        border-radius: 0 !important;
+        animation: none !important;
+    }
+    
+    #invoice-print-area {
+        width: 100%;
+        padding: 20px;
+        max-width: none !important;
+    }
+    
+    /* Reset body for print */
+    body {
+        background: white !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 12pt !important;
+        line-height: 1.4 !important;
+        color: black !important;
+    }
+    
+    /* Ensure colors print correctly */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    /* Invoice specific print styles */
+    .invoice-header {
+        margin-bottom: 20px !important;
+        padding-bottom: 15px !important;
+        page-break-after: avoid;
+    }
+    
+    .invoice-logo h1 {
+        font-size: 18pt !important;
+    }
+    
+    .invoice-title h2 {
+        font-size: 24pt !important;
+    }
+    
+    .invoice-parties {
+        margin: 20px 0 !important;
+        padding: 15px !important;
+        page-break-inside: avoid;
+        background: #f8f9fa !important;
+    }
+    
+    .invoice-table {
+        margin: 20px 0 !important;
+        page-break-inside: avoid;
+        font-size: 11pt !important;
+    }
+    
+    .invoice-table th {
+        background: #dc3545 !important;
+        color: white !important;
+        padding: 8px !important;
+        font-size: 10pt !important;
+    }
+    
+    .invoice-table td {
+        padding: 8px !important;
+        border-bottom: 1px solid #e0e0e0 !important;
+        font-size: 11pt !important;
+    }
+    
+    .total-row td {
+        font-size: 14pt !important;
+        font-weight: bold !important;
+        padding: 12px 8px !important;
+    }
+    
+    .invoice-payment-info {
+        margin: 20px 0 !important;
+        padding: 15px !important;
+        page-break-inside: avoid;
+        background: #f8f9fa !important;
+    }
+    
+    .invoice-footer {
+        margin-top: 30px !important;
+        padding-top: 20px !important;
+        page-break-inside: avoid;
+    }
+    
+    /* Force single page layout */
+    .invoice-content {
+        page-break-inside: avoid;
+    }
+    
+    /* Prevent page breaks in critical sections */
+    .invoice-header, 
+    .invoice-parties, 
+    .invoice-table thead,
+    .invoice-payment-info {
+        page-break-inside: avoid;
+        page-break-after: avoid;
+    }
+    
+    /* Hide modal close button and actions */
+    .modal-close,
+    .invoice-actions {
+        display: none !important;
+    }
+    
+    /* Compact spacing for print */
+    h1, h2, h3 {
+        margin: 10px 0 5px 0 !important;
+    }
+    
+    p {
+        margin: 3px 0 !important;
+    }
+    
+    /* Ensure proper page margins */
+    @page {
+        margin: 0.5in;
+        size: A4;
+    }
+}

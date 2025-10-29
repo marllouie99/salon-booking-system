@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Salon Booking System</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✂️</text></svg>">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Shared Navbar CSS -->
+    <link rel="stylesheet" href="/components/navbar.css">
+    
+    <!-- Page-Specific CSS -->
+    <link rel="stylesheet" href="customer-home.css">
+    <link rel="stylesheet" href="red-theme.css">
+    <link rel="stylesheet" href="chat.css">
+    
+    <!-- PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=ASJPu62UX5oVHi4eo_FWv9hJIniV6H_lbclcdqzXdk1DGZ5sEeU_Y3b9QBZF5U1OSttudcSc685CWJBX&currency=PHP&disable-funding=credit,card" async></script>
+    <!-- API base URL config -->
+    <script src="config.js"></script>
+</head>
+<body>
+    <!-- Load Navbar Component -->
+    <script>
+        fetch('/components/navbar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.body.insertAdjacentHTML('afterbegin', html);
+                const script = document.createElement('script');
+                script.src = '/components/navbar.js';
+                document.head.appendChild(script);
+            });
+    </script>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Profile Completion Warning Banner -->
+        <div id="profileWarningBanner" class="warning-banner" style="display: none;">
+            <div class="warning-content">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div class="warning-text">
+                    <strong>Complete Your Profile</strong>
+                    <p>Missing required fields: <span id="missingFields">Address</span></p>
+                </div>
+                <a href="/profile.html" class="btn-complete-profile">
+                    <i class="fas fa-user-edit"></i> Complete Profile
+                </a>
+                <button class="btn-close-warning" onclick="closeWarningBanner()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1>Welcome back, <span id="welcomeName">User</span>! 👋</h1>
+                <p>Find and book the perfect salon experience for you</p>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search for salons, services, or locations..." onkeypress="handleSearchKeyPress(event)">
+                    <button class="btn-search" onclick="performSearch()">Search</button>
+                    <button class="btn-filters" onclick="toggleFilters()">
+                        <i class="fas fa-filter"></i> Filters
+                    </button>
+                </div>
+                
+                <!-- Advanced Filters -->
+                <div class="filters-panel" id="filtersPanel" style="display: none;">
+                    <div class="filters-content">
+                        <div class="filter-group">
+                            <label>Location</label>
+                            <select id="cityFilter">
+                                <option value="">All Cities</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Rating</label>
+                            <select id="ratingFilter">
+                                <option value="">Any Rating</option>
+                                <option value="4">4+ Stars</option>
+                                <option value="3">3+ Stars</option>
+                                <option value="2">2+ Stars</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Price Range</label>
+                            <div class="price-range">
+                                <input type="number" id="minPrice" placeholder="Min ₱" min="0">
+                                <input type="number" id="maxPrice" placeholder="Max ₱" min="0">
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label>Service Type</label>
+                            <input type="text" id="serviceFilter" placeholder="e.g. Haircut, Manicure">
+                        </div>
+                        <div class="filter-group">
+                            <label>Sort By</label>
+                            <select id="sortFilter">
+                                <option value="name">Name</option>
+                                <option value="rating">Highest Rated</option>
+                                <option value="reviews">Most Reviewed</option>
+                            </select>
+                        </div>
+                        <div class="filter-actions">
+                            <input type="checkbox" id="verifiedOnly"> <label for="verifiedOnly">Verified Salons Only</label>
+                        </div>
+                        <div class="filter-buttons">
+                            <button class="btn-clear" onclick="clearFilters()">Clear All</button>
+                            <button class="btn-apply" onclick="applyFilters()">Apply Filters</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Search Results -->
+        <section class="search-results-section" id="searchResultsSection" style="display: none;">
+            <div class="section-header">
+                <h2 id="searchResultsTitle">Search Results</h2>
+                <div class="search-stats">
+                    <span id="searchCount">0 salons found</span>
+                    <button class="btn-clear-search" onclick="clearSearch()">
+                        <i class="fas fa-times"></i> Clear Search
+                    </button>
+                </div>
+            </div>
+            <div class="salon-grid" id="searchResults">
+                <!-- Search results will be displayed here -->
+            </div>
+        </section>
+
+        <!-- Featured Salons -->
+        <section class="featured-section" id="featuredSection">
+            <div class="section-header">
+                <h2>Featured Salons</h2>
+                <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="salon-grid" id="featuredSalons">
+                <!-- Real salon data will be loaded here from the database -->
+                <div class="loading-placeholder">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading salons...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Popular Services -->
+        <section class="section">
+            <div class="section-header">
+                <h2>Popular Services</h2>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="fas fa-cut"></i>
+                    </div>
+                    <h3>Haircut & Styling</h3>
+                    <p>Professional cuts and styles</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <h3>Hair Coloring</h3>
+                    <p>Expert coloring services</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <i class="fas fa-spa"></i>
+                    </div>
+                    <h3>Spa & Facial</h3>
+                    <p>Relaxing spa treatments</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                        <i class="fas fa-hand-sparkles"></i>
+                    </div>
+                    <h3>Manicure & Pedicure</h3>
+                    <p>Nail care services</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h3>Makeup</h3>
+                    <p>Professional makeup</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <h3>Bridal Services</h3>
+                    <p>Complete bridal packages</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Upcoming Appointments -->
+        <section class="section">
+            <div class="section-header">
+                <h2>Upcoming Appointments</h2>
+                <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="appointments-list" id="upcomingAppointments">
+                <div class="empty-state">
+                    <i class="fas fa-calendar-times"></i>
+                    <h3>No upcoming appointments</h3>
+                    <p>Book a salon service to get started!</p>
+                    <button class="btn-primary">Browse Salons</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+    <!-- Include Booking Modal -->
+    <div id="bookingModalContainer"></div>
+
+    <!-- Scripts -->
+    <script src="/shared-functions.js?v=20251019162800"></script>
+    <script src="customer-home.js?v=20251019162800"></script>
+    <script src="chat.js?v=20251019162800"></script>
+    <script src="booking.js?v=20251019162800"></script>
+    
+    <script>
+        // Load booking modal HTML
+        fetch('/booking-modal.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('bookingModalContainer').innerHTML = html;
+            });
+    </script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Management - Admin Dashboard</title>
+    <link rel="stylesheet" href="/admin-styles.css?v=1.1">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-cut"></i>
+                    <span>SalonBook Admin</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="/admin.html" class="nav-link">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin-users.html" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            <span>User Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin-salons.html" class="nav-link">
+                            <i class="fas fa-store"></i>
+                            <span>Salon Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin-applications.html" class="nav-link">
+                            <i class="fas fa-clipboard-check"></i>
+                            <span>Salon Applications</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="/admin-bookings.html" class="nav-link">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Booking Management</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>Booking Management</h1>
+                    <p>Monitor and manage all salon bookings</p>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <span id="userEmail">admin@salon.com</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Coming Soon Content -->
+            <div class="dashboard-content">
+                <div class="dashboard-card">
+                    <div class="card-content" style="text-align: center; padding: 4rem;">
+                        <i class="fas fa-calendar-check" style="font-size: 4rem; color: #cbd5e0; margin-bottom: 1rem;"></i>
+                        <h2>Booking Management</h2>
+                        <p style="color: #718096; font-size: 1.1rem; margin: 1rem 0;">This feature is coming soon!</p>
+                        <p style="color: #a0aec0;">View, manage, and analyze all salon bookings and appointments.</p>
+                        <div style="margin-top: 2rem;">
+                            <button class="btn btn-primary" onclick="window.location.href='/admin/users'">
+                                <i class="fas fa-users"></i>
+                                Go to User Management
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/admin-script.js"></script>
+</body>
+</html>

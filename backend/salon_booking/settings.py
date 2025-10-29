@@ -106,7 +106,7 @@ ROOT_URLCONF = 'salon_booking.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  # Add templates directory
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -200,8 +200,13 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Additional locations for static files (frontend assets)
+STATICFILES_DIRS = [
+    BASE_DIR / 'templates',  # Serve frontend files as static
+]
 
 # WhiteNoise configuration for serving static files in production
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

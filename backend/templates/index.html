@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salon Booking System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="red-theme.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="config.js"></script>
+    <!-- Auto-redirect if already logged in -->
+    <script>
+        // Check if user is already logged in and redirect immediately
+        (function() {
+            const userData = localStorage.getItem('user_data');
+            const accessToken = localStorage.getItem('access_token');
+            
+            if (userData && accessToken) {
+                console.log('✅ User already logged in, redirecting...');
+                try {
+                    const user = JSON.parse(userData);
+                    const base = window.location.origin;
+                    let redirectUrl;
+                    
+                    if (user.is_staff || user.is_superuser) {
+                        redirectUrl = base + '/admin.html';
+                    } else if (user.user_type === 'salon_owner') {
+                        redirectUrl = base + '/salon-owner-dashboard.html';
+                    } else {
+                        redirectUrl = base + '/customer-home.html';
+                    }
+                    
+                    console.log('🚀 Auto-redirecting to:', redirectUrl);
+                    window.location.replace(redirectUrl);
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                }
+            }
+        })();
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-cut"></i>
+                    <span>SalonBook</span>
+                </div>
+                <div class="nav-buttons">
+                    <button class="btn btn-outline" onclick="showLogin()">Login</button>
+                    <button class="btn btn-primary" onclick="showRegister()">Register</button>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Book Your Perfect Salon Experience</h1>
+                <p>Professional beauty services at your fingertips. Book appointments with top-rated salons in your area.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-large btn-primary" onclick="showRegister()">Get Started</button>
+                    <button class="btn btn-large btn-outline" onclick="showLogin()">I Have an Account</button>
+                </div>
+            </div>
+            <div class="hero-image">
+                <i class="fas fa-spa"></i>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <div class="feature-card">
+                <i class="fas fa-calendar-alt"></i>
+                <h3>Easy Booking</h3>
+                <p>Book appointments in just a few clicks</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-star"></i>
+                <h3>Top Salons</h3>
+                <p>Access to premium salon services</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-clock"></i>
+                <h3>Real-time Updates</h3>
+                <p>Get instant booking confirmations</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <div class="auth-container">
+                <h2>Welcome Back</h2>
+                <form id="loginForm" class="auth-form">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="text" id="loginEmail" placeholder="Email or Username" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="loginPassword" placeholder="Password" required>
+                    </div>
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-password" onclick="event.preventDefault(); showForgotPassword();">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+                </form>
+                
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+                
+                <div id="googleSignInButton" class="google-signin-btn"></div>
+                
+                <div class="auth-switch">
+                    <p>Don't have an account? <a href="#" onclick="switchToRegister()">Sign up here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            <div class="auth-container">
+                <h2>Create Account</h2>
+                <p class="auth-subtitle">Join us and start booking your salon appointments</p>
+                
+                <form id="registerForm" class="auth-form">
+                    <!-- Personal Information -->
+                    <div class="input-row">
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="firstName" placeholder="First Name" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="lastName" placeholder="Last Name" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Contact Information -->
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="registerEmail" placeholder="Email Address" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" id="phone" placeholder="Phone Number" required>
+                    </div>
+                    
+                    <!-- Password -->
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="registerPassword" placeholder="Password" required minlength="8">
+                    </div>
+                    
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirmPassword" placeholder="Confirm Password" required minlength="8">
+                    </div>
+                    
+                    <!-- Terms & Conditions -->
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="agreeTerms" required>
+                            <span>I agree to the <a href="#" target="_blank">Terms & Conditions</a></span>
+                        </label>
+                    </div>
+                    
+                    <!-- Hidden field to default user type to customer -->
+                    <input type="hidden" name="userType" value="customer">
+                    
+                    <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+                </form>
+                
+                <div class="auth-switch">
+                    <p>Already have an account? <a href="#" onclick="switchToLogin()">Sign in here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Verification Modal -->
+    <div id="verificationModal" class="modal">
+        <div class="modal-content">
+            <div class="auth-container">
+                <div class="verification-header">
+                    <i class="fas fa-envelope-open-text" style="font-size: 3rem; color: #6f42c1; margin-bottom: 1rem;"></i>
+                    <h2>Verify Your Email</h2>
+                    <p style="color: #6c757d; margin-bottom: 2rem;">
+                        We've sent a 6-digit verification code to<br>
+                        <strong id="verificationEmail"></strong>
+                    </p>
+                </div>
+                <form id="verificationForm" class="auth-form">
+                    <div class="verification-code-input">
+                        <input type="text" maxlength="1" class="code-digit" data-index="0" required>
+                        <input type="text" maxlength="1" class="code-digit" data-index="1" required>
+                        <input type="text" maxlength="1" class="code-digit" data-index="2" required>
+                        <input type="text" maxlength="1" class="code-digit" data-index="3" required>
+                        <input type="text" maxlength="1" class="code-digit" data-index="4" required>
+                        <input type="text" maxlength="1" class="code-digit" data-index="5" required>
+                    </div>
+                    <p class="verification-timer" id="verificationTimer">Code expires in: <span id="countdown">15:00</span></p>
+                    <button type="submit" class="btn btn-primary btn-full">Verify Email</button>
+                    <button type="button" class="btn btn-outline btn-full" onclick="resendVerificationCode()" id="resendBtn">
+                        <i class="fas fa-redo"></i> Resend Code
+                    </button>
+                </form>
+                <div class="auth-switch">
+                    <p><a href="#" onclick="closeModal('verificationModal'); showLogin()">Back to Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal - Step 1: Enter Email -->
+    <div id="forgotPasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('forgotPasswordModal')">&times;</span>
+            <div class="auth-container">
+                <div class="verification-header">
+                    <i class="fas fa-key" style="font-size: 3rem; color: #764ba2; margin-bottom: 1rem;"></i>
+                    <h2>Forgot Password?</h2>
+                    <p style="color: #6c757d; margin-bottom: 2rem;">
+                        Enter your email address and we'll send you a code to reset your password.
+                    </p>
+                </div>
+                <form id="forgotPasswordForm" class="auth-form">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="resetEmail" placeholder="Email Address" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Send Reset Code</button>
+                </form>
+                <div class="auth-switch">
+                    <p><a href="#" onclick="closeModal('forgotPasswordModal'); showLogin()">Back to Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Reset Verification Modal - Step 2: Enter Code -->
+    <div id="resetCodeModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('resetCodeModal')">&times;</span>
+            <div class="auth-container">
+                <div class="verification-header">
+                    <i class="fas fa-shield-alt" style="font-size: 3rem; color: #764ba2; margin-bottom: 1rem;"></i>
+                    <h2>Enter Reset Code</h2>
+                    <p style="color: #6c757d; margin-bottom: 2rem;">
+                        We've sent a 6-digit code to<br>
+                        <strong id="resetEmailDisplay"></strong>
+                    </p>
+                </div>
+                <form id="resetCodeForm" class="auth-form">
+                    <div class="verification-code-input">
+                        <input type="text" maxlength="1" class="code-digit reset-code-digit" data-index="0" required>
+                        <input type="text" maxlength="1" class="code-digit reset-code-digit" data-index="1" required>
+                        <input type="text" maxlength="1" class="code-digit reset-code-digit" data-index="2" required>
+                        <input type="text" maxlength="1" class="code-digit reset-code-digit" data-index="3" required>
+                        <input type="text" maxlength="1" class="code-digit reset-code-digit" data-index="4" required>
+                        <input type="text" maxlength="1" class="code-digit reset-code-digit" data-index="5" required>
+                    </div>
+                    <p class="verification-timer" id="resetCodeTimer">Code expires in: <span id="resetCountdown">15:00</span></p>
+                    <button type="submit" class="btn btn-primary btn-full">Verify Code</button>
+                    <button type="button" class="btn btn-outline btn-full" onclick="resendResetCode()">
+                        <i class="fas fa-redo"></i> Resend Code
+                    </button>
+                </form>
+                <div class="auth-switch">
+                    <p><a href="#" onclick="closeModal('resetCodeModal'); showForgotPassword()">Try Different Email</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Password Modal - Step 3: Set New Password -->
+    <div id="newPasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('newPasswordModal')">&times;</span>
+            <div class="auth-container">
+                <div class="verification-header">
+                    <i class="fas fa-lock" style="font-size: 3rem; color: #764ba2; margin-bottom: 1rem;"></i>
+                    <h2>Create New Password</h2>
+                    <p style="color: #6c757d; margin-bottom: 2rem;">
+                        Enter your new password below
+                    </p>
+                </div>
+                <form id="newPasswordForm" class="auth-form">
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="newPassword" placeholder="New Password" required minlength="8">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirmNewPassword" placeholder="Confirm New Password" required minlength="8">
+                    </div>
+                    <p style="font-size: 0.85rem; color: #6c757d; margin-bottom: 1rem;">
+                        <i class="fas fa-info-circle"></i> Password must be at least 8 characters long
+                    </p>
+                    <button type="submit" class="btn btn-primary btn-full">Reset Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

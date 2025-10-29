@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - Salon Booking System</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✂️</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Shared Navbar CSS -->
+    <link rel="stylesheet" href="/components/navbar.css">
+    
+    <!-- Page-Specific CSS -->
+    <link rel="stylesheet" href="/customer-home.css">
+    <link rel="stylesheet" href="/red-theme.css">
+    <link rel="stylesheet" href="/reviews.css">
+    <link rel="stylesheet" href="/my-bookings-new.css">
+    <link rel="stylesheet" href="/my-bookings-redesign.css">
+    
+    <!-- PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=ASJPu62UX5oVHi4eo_FWv9hJIniV6H_lbclcdqzXdk1DGZ5sEeU_Y3b9QBZF5U1OSttudcSc685CWJBX&currency=PHP&disable-funding=credit,card" async></script>
+    <!-- API Configuration -->
+    <script src="config.js"></script>
+</head>
+<body>
+    <!-- Load Navbar Component -->
+    <script>
+        fetch('/components/navbar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.body.insertAdjacentHTML('afterbegin', html);
+                const script = document.createElement('script');
+                script.src = '/components/navbar.js';
+                document.head.appendChild(script);
+            });
+    </script>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1><i class="fas fa-calendar-alt"></i> My Bookings</h1>
+                <p>View and manage your salon appointments</p>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-status="all" onclick="filterBookings('all')">
+                    All Bookings
+                </button>
+                <button class="filter-tab" data-status="pending" onclick="filterBookings('pending')">
+                    <i class="fas fa-clock"></i> Pending
+                </button>
+                <button class="filter-tab" data-status="confirmed" onclick="filterBookings('confirmed')">
+                    <i class="fas fa-check-circle"></i> Confirmed
+                </button>
+                <button class="filter-tab" data-status="completed" onclick="filterBookings('completed')">
+                    <i class="fas fa-check-double"></i> Completed
+                </button>
+                <button class="filter-tab" data-status="cancelled" onclick="filterBookings('cancelled')">
+                    <i class="fas fa-times-circle"></i> Cancelled
+                </button>
+            </div>
+
+            <!-- Bookings List -->
+            <div class="bookings-container" id="bookingsContainer">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Loading your bookings...
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content" style="background: #1a1a1a !important; color: #ffffff !important; max-width: 800px !important; width: 95% !important; padding: 4rem !important; min-height: 500px !important; border: 1px solid rgba(220, 53, 69, 0.3) !important;">
+            <span class="close" onclick="closePaymentModal()">&times;</span>
+            <h2 style="margin-bottom: 2.5rem !important; color: #ffffff !important;"><i class="fas fa-credit-card"></i> Complete Payment</h2>
+            <div id="paymentBookingInfo" class="payment-booking-info"></div>
+            
+            <!-- Payment Methods -->
+            <div class="payment-methods-container" style="margin-top: 2.5rem;">
+                <h3 style="color: #ffffff; margin-bottom: 1.5rem; font-size: 1.2rem;">Choose Payment Method</h3>
+                
+                <!-- PayPal Payment -->
+                <div class="payment-method-option" style="margin-bottom: 1.5rem;">
+                    <div class="payment-method-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; padding: 1rem; background: rgba(255, 255, 255, 0.05); border-radius: 10px; border: 2px solid rgba(220, 53, 69, 0.3);">
+                        <i class="fab fa-paypal" style="font-size: 2rem; color: #0070ba;"></i>
+                        <div>
+                            <h4 style="margin: 0; color: #ffffff; font-size: 1.1rem;">PayPal</h4>
+                            <p style="margin: 0; color: #94a3b8; font-size: 0.9rem;">Pay securely with PayPal</p>
+                        </div>
+                    </div>
+                    <div id="paypal-button-container-payment"></div>
+                </div>
+                
+                <!-- Stripe Payment -->
+                <div class="payment-method-option">
+                    <div class="payment-method-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; padding: 1rem; background: rgba(255, 255, 255, 0.05); border-radius: 10px; border: 2px solid rgba(220, 53, 69, 0.3);">
+                        <i class="fab fa-stripe" style="font-size: 2rem; color: #635bff;"></i>
+                        <div>
+                            <h4 style="margin: 0; color: #ffffff; font-size: 1.1rem;">Credit/Debit Card</h4>
+                            <p style="margin: 0; color: #94a3b8; font-size: 0.9rem;">Pay with Stripe (Visa, Mastercard, etc.)</p>
+                        </div>
+                    </div>
+                    <button id="stripe-payment-button" class="btn-stripe-payment" style="width: 100%; padding: 1rem; background: linear-gradient(45deg, #635bff, #5469d4); color: white; border: none; border-radius: 10px; font-size: 1.1rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.75rem; transition: all 0.3s;" onclick="processStripePayment()">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Pay with Card</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="review-modal" class="review-modal">
+        <div class="review-modal-content">
+            <button class="modal-close" onclick="hideReviewModal()">&times;</button>
+            <h2>Leave a Review</h2>
+            <p>Share your experience at <strong id="review-salon-name"></strong></p>
+            
+            <form id="review-form">
+                <input type="hidden" id="review-salon-id">
+                <input type="hidden" id="review-booking-id">
+                
+                <!-- Overall Rating -->
+                <div class="form-group">
+                    <label>Overall Rating *</label>
+                    <div class="star-rating">
+                        <input type="hidden" id="rating" value="5">
+                        <div class="stars-input">
+                            <span class="star active" onclick="updateStarDisplay('rating', 1)">★</span>
+                            <span class="star active" onclick="updateStarDisplay('rating', 2)">★</span>
+                            <span class="star active" onclick="updateStarDisplay('rating', 3)">★</span>
+                            <span class="star active" onclick="updateStarDisplay('rating', 4)">★</span>
+                            <span class="star active" onclick="updateStarDisplay('rating', 5)">★</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Review Title -->
+                <div class="form-group">
+                    <label for="review-title">Title (Optional)</label>
+                    <input type="text" id="review-title" placeholder="Sum up your experience...">
+                </div>
+                
+                <!-- Review Comment -->
+                <div class="form-group">
+                    <label for="review-comment">Your Review *</label>
+                    <textarea id="review-comment" required placeholder="Tell us about your experience..." rows="5"></textarea>
+                    <small>Share details about the service, staff, cleanliness, etc.</small>
+                </div>
+                
+                <!-- Detailed Ratings -->
+                <div class="detailed-ratings-section">
+                    <h4>Detailed Ratings (Optional)</h4>
+                    
+                    <div class="form-group">
+                        <label>Service Quality</label>
+                        <div class="star-rating">
+                            <input type="hidden" id="service-quality" value="5">
+                            <div class="stars-input">
+                                <span class="star active" onclick="updateStarDisplay('service-quality', 1)">★</span>
+                                <span class="star active" onclick="updateStarDisplay('service-quality', 2)">★</span>
+                                <span class="star active" onclick="updateStarDisplay('service-quality', 3)">★</span>
+                                <span class="star active" onclick="updateStarDisplay('service-quality', 4)">★</span>
+                                <span class="star active" onclick="updateStarDisplay('service-quality', 5)">★</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Cleanliness</label>
+                        <div class="star-rating">
+                            <input type="hidden" id="cleanliness" value="5">
+                            <div class="stars-input">
+                                <span class="star active" onclick="updateStarDisplay('cleanliness', 1)">★</span>
+                                <span class="star active" onclick="updateStarDisplay('cleanliness', 2)">★</span>
+                                <span class="star active" onclick="updateStarDisplay('cleanliness', 3)">★</span>
+                                <span class="star active" onclick="updateStarDisplay('cleanliness', 4)">★</span>
+                                <span class="star active" onclick="updateStarDisplay('cleanliness', 5)">★</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Value for Money</label>
+                        <div class="star-rating">
+                            <input type="hidden" id="value-for-money" value="5">
+                            <div class="stars-input">
+                                <span class="star active" onclick="updateStarDisplay('value-for-money', 1)">★</span>
+                                <span class="star active" onclick="updateStarDisplay('value-for-money', 2)">★</span>
+                                <span class="star active" onclick="updateStarDisplay('value-for-money', 3)">★</span>
+                                <span class="star active" onclick="updateStarDisplay('value-for-money', 4)">★</span>
+                                <span class="star active" onclick="updateStarDisplay('value-for-money', 5)">★</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Staff Friendliness</label>
+                        <div class="star-rating">
+                            <input type="hidden" id="staff-friendliness" value="5">
+                            <div class="stars-input">
+                                <span class="star active" onclick="updateStarDisplay('staff-friendliness', 1)">★</span>
+                                <span class="star active" onclick="updateStarDisplay('staff-friendliness', 2)">★</span>
+                                <span class="star active" onclick="updateStarDisplay('staff-friendliness', 3)">★</span>
+                                <span class="star active" onclick="updateStarDisplay('staff-friendliness', 4)">★</span>
+                                <span class="star active" onclick="updateStarDisplay('staff-friendliness', 5)">★</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Buttons -->
+                <div class="modal-buttons">
+                    <button type="button" class="btn-cancel" onclick="hideReviewModal()">Cancel</button>
+                    <button type="submit" class="btn-submit">Submit Review</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Invoice Modal -->
+    <div id="invoice-modal" class="modal" style="display: none;">
+        <div class="modal-content invoice-content">
+            <button class="modal-close" onclick="closeInvoiceModal()">&times;</button>
+            
+            <div id="invoice-print-area">
+                <!-- Invoice Header -->
+                <div class="invoice-header">
+                    <div class="invoice-logo">
+                        <i class="fas fa-cut"></i>
+                        <h1>SalonBook</h1>
+                    </div>
+                    <div class="invoice-title">
+                        <h2>INVOICE</h2>
+                        <p class="invoice-number">Invoice #<span id="invoice-number"></span></p>
+                        <p class="invoice-date">Date: <span id="invoice-date"></span></p>
+                    </div>
+                </div>
+
+                <!-- Invoice Details -->
+                <div class="invoice-body">
+                    <!-- Customer & Salon Info -->
+                    <div class="invoice-parties">
+                        <div class="invoice-section">
+                            <h3>Bill To:</h3>
+                            <p id="customer-name"></p>
+                            <p id="customer-email"></p>
+                            <p id="customer-phone"></p>
+                        </div>
+                        <div class="invoice-section">
+                            <h3>Service Provider:</h3>
+                            <p id="salon-name"></p>
+                            <p id="salon-address"></p>
+                            <p id="salon-phone"></p>
+                        </div>
+                    </div>
+
+                    <!-- Service Details Table -->
+                    <table class="invoice-table">
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Date & Time</th>
+                                <th>Duration</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoice-items">
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-right"><strong>Subtotal:</strong></td>
+                                <td id="invoice-subtotal"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="text-right"><strong>Platform Fee:</strong></td>
+                                <td id="invoice-fee">₱0.00</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="3" class="text-right"><strong>Total Paid:</strong></td>
+                                <td id="invoice-total"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <!-- Payment Info -->
+                    <div class="invoice-payment-info">
+                        <h3>Payment Information</h3>
+                        <p><strong>Payment Method:</strong> <span id="payment-method"></span></p>
+                        <p><strong>Payment Status:</strong> <span id="payment-status-invoice" class="status-badge"></span></p>
+                        <p><strong>Transaction ID:</strong> <span id="transaction-id"></span></p>
+                        <p><strong>Payment Date:</strong> <span id="payment-date"></span></p>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="invoice-footer">
+                        <p>Thank you for choosing SalonBook!</p>
+                        <p>For any questions, please contact us at support@salonbook.com</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Print Button -->
+            <div class="invoice-actions">
+                <button class="btn-print" onclick="printInvoice()">
+                    <i class="fas fa-print"></i> Print Invoice
+                </button>
+                <button class="btn-download" onclick="downloadInvoice()">
+                    <i class="fas fa-download"></i> Download PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/shared-functions.js"></script>
+    <script src="/customer-home.js"></script>
+    <script src="/reviews.js"></script>
+    <script src="/my-bookings.js"></script>
+</body>
+</html>

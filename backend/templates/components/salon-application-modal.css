@@ -1,0 +1,200 @@
+/* Shared styles for Salon Application Modal across all pages */
+/* Scope with .salon-apply-modal to avoid leaking styles */
+
+/* Consistent form actions layout */
+.salon-apply-modal .form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 1rem;
+}
+
+/* Submit disabled state */
+.salon-apply-modal .form-actions .btn-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Compact warning banner above buttons */
+.salon-apply-modal .form-submission-warning {
+  background: linear-gradient(135deg, #ffc107, #ff9800);
+  border-left: 4px solid #ff6f00;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  animation: salonModalSlideDown 0.3s ease;
+}
+
+.salon-apply-modal .form-submission-warning i {
+  font-size: 1.2rem;
+  color: #1a1a1a;
+}
+
+.salon-apply-modal .form-submission-warning span {
+  flex: 1;
+  color: #1a1a1a;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.salon-apply-modal .btn-complete-profile-small {
+  background: #1a1a1a;
+  color: #ffc107;
+  padding: 0.4rem 0.9rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.salon-apply-modal .btn-complete-profile-small:hover {
+  background: #2d2d2d;
+  transform: translateY(-1px);
+}
+
+@keyframes salonModalSlideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Searchable Select Dropdown Styles */
+.searchable-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.searchable-select-input {
+  width: 100%;
+  padding: 0.75rem 2.5rem 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.searchable-select-input:focus {
+  outline: none;
+  border-color: #667eea;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.searchable-select-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.searchable-select-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.searchable-select-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  transition: transform 0.3s;
+}
+
+.searchable-select-wrapper.active .searchable-select-icon {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.searchable-select-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  background: #2d2d2d;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: dropdownFadeIn 0.2s ease;
+}
+
+.searchable-select-dropdown.show {
+  display: block;
+}
+
+.searchable-select-dropdown::-webkit-scrollbar {
+  width: 8px;
+}
+
+.searchable-select-dropdown::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.searchable-select-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.searchable-select-dropdown::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.dropdown-item {
+  padding: 0.75rem 1rem;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background: rgba(102, 126, 234, 0.2);
+  padding-left: 1.25rem;
+}
+
+.dropdown-item.selected {
+  background: rgba(102, 126, 234, 0.3);
+  font-weight: 600;
+}
+
+.dropdown-item .item-region {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-left: 0.5rem;
+}
+
+.dropdown-no-results {
+  padding: 1rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
