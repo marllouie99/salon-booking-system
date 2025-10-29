@@ -7,7 +7,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, RedirectView
 
 def api_root(request):
     """API root endpoint with information about available endpoints"""
@@ -27,6 +27,7 @@ def api_root(request):
 urlpatterns = [
     # Frontend routes - serve HTML templates
     path('', TemplateView.as_view(template_name='index.html'), name='home'),
+    path('home', RedirectView.as_view(url='/', permanent=False), name='home_redirect'),
     path('admin.html', TemplateView.as_view(template_name='admin.html'), name='admin_page'),
     path('customer-home.html', TemplateView.as_view(template_name='customer-home.html'), name='customer_home'),
     path('salon-owner-dashboard.html', TemplateView.as_view(template_name='salon-owner-dashboard.html'), name='salon_dashboard'),
