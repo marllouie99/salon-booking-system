@@ -707,6 +707,8 @@ async function handleStripePaymentReturn() {
     const bookingId = urlParams.get('booking_id');
     const sessionId = urlParams.get('session_id');
     
+    console.log('[STRIPE RETURN] Payment:', payment, 'Booking ID:', bookingId, 'Session ID:', sessionId);
+    
     if (payment === 'success' && bookingId && sessionId) {
         // Payment successful - verify with backend
         showNotification('Verifying payment...', 'info');
@@ -714,6 +716,7 @@ async function handleStripePaymentReturn() {
         try {
             const accessToken = localStorage.getItem('access_token');
             
+            console.log('[STRIPE VERIFY] Calling verification endpoint...');
             const response = await fetch(`${window.API_BASE_URL}/api/bookings/${bookingId}/stripe/verify/`, {
                 method: 'POST',
                 headers: {
@@ -725,36 +728,47 @@ async function handleStripePaymentReturn() {
                 })
             });
             
+            console.log('[STRIPE VERIFY] Response status:', response.status);
+            
             if (response.ok) {
                 const data = await response.json();
+                console.log('[STRIPE VERIFY] Response data:', data);
                 
                 if (data.success) {
-                    showNotification('Payment successful! Your booking is confirmed.', 'success');
+                    showNotification('✅ Payment successful! Your booking is confirmed.', 'success');
                     
                     // Reload bookings after a short delay
                     setTimeout(() => {
                         loadMyBookings();
                     }, 1500);
                 } else {
-                    showNotification('Payment verification failed. Please contact support.', 'warning');
+                    console.error('[STRIPE VERIFY] Verification failed:', data);
+                    showNotification(`Payment verification failed: ${data.message || 'Unknown error'}. Please contact support.`, 'warning');
                 }
             } else {
-                showNotification('Payment verification failed. Please contact support.', 'error');
+                const errorData = await response.json().catch(() => ({}));
+                console.error('[STRIPE VERIFY] HTTP error:', response.status, errorData);
+                showNotification(`Payment verification failed (${response.status}). Please contact support with booking ID: ${bookingId}`, 'error');
             }
             
         } catch (error) {
-            console.error('Payment verification error:', error);
-            showNotification('Error verifying payment. Please contact support.', 'error');
+            console.error('[STRIPE VERIFY] Exception:', error);
+            showNotification(`Error verifying payment: ${error.message}. Please contact support with booking ID: ${bookingId}`, 'error');
         }
         
-        // Clean up URL
-        window.history.replaceState({}, document.title, window.location.pathname);
+        // Clean up URL after a delay to allow user to see the message
+        setTimeout(() => {
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }, 3000);
         
     } else if (payment === 'cancelled' && bookingId) {
         // Payment cancelled
-        showNotification('Payment cancelled. You can try again anytime.', 'info');
+        console.log('[STRIPE] Payment cancelled for booking:', bookingId);
+        showNotification('⚠️ Payment cancelled. Your booking is still pending. Click "Pay Now" to complete payment.', 'warning');
         
         // Clean up URL
-        window.history.replaceState({}, document.title, window.location.pathname);
+        setTimeout(() => {
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }, 3000);
     }
 }
