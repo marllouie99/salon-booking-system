@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, get_user_model
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 from datetime import timedelta
 import random
 from .models import User
@@ -486,10 +487,19 @@ def resend_verification_code(request):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(['POST'])
+@csrf_exempt
+@api_view(['POST', 'OPTIONS'])
 @permission_classes([AllowAny])
 def google_login(request):
     """Login/Register with Google OAuth"""
+    # Handle preflight OPTIONS request
+    if request.method == 'OPTIONS':
+        response = Response(status=status.HTTP_200_OK)
+        response['Access-Control-Allow-Origin'] = request.headers.get('Origin', '*')
+        response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Accept'
+        response['Access-Control-Allow-Credentials'] = 'true'
+        return response
     try:
         token = request.data.get('token')
         
@@ -567,7 +577,7 @@ def google_login(request):
             # Generate JWT tokens
             refresh = RefreshToken.for_user(user)
             
-            return Response({
+            response = Response({
                 'message': 'Login successful',
                 'tokens': {
                     'refresh': str(refresh),
@@ -586,6 +596,11 @@ def google_login(request):
                     'is_superuser': user.is_superuser
                 }
             }, status=status.HTTP_200_OK)
+            
+            # Add CORS headers
+            response['Access-Control-Allow-Origin'] = request.headers.get('Origin', '*')
+            response['Access-Control-Allow-Credentials'] = 'true'
+            return response
             
         except ValueError as e:
             return Response({
